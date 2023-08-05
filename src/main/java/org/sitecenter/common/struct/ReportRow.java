@@ -13,6 +13,7 @@ public class ReportRow {
     public final static int STATUS_WARN = 2;
     public final static int STATUS_ERROR = 3;
     String group;
+    String code;
     String name;
     String value;
     int status;

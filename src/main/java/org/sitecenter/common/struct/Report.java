@@ -18,4 +18,7 @@ public class Report {
         this.name = name;
         this.date = LocalDateTime.now();
     }
+    public void addRow(String group, String code, String name, String value, int status, String comment) {
+        getRows().add(new ReportRow(group, code, name, value, status, comment));
+    }
 }
