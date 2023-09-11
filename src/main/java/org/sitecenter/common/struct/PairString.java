@@ -1,20 +1,16 @@
 package org.sitecenter.common.struct;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@Data
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class PairString {
     private String key;
     private String value;
-
-    public PairString() {
-    }
-    public PairString(String key, String value) {
-        this.key = key;
-        this.value = value;
-    }
 
     public String getKey() {
         return key;

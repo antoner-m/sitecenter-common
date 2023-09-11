@@ -3,50 +3,36 @@ package org.sitecenter.common.struct;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Data
-@NoArgsConstructor
+@Accessors(chain = true)
 public class Report {
     String name;
     LocalDateTime date;
+    /** Time to generate report. */
+    long generationMs;
+
     List<ReportRow> rows = new LinkedList<>();
     Map<String,String> groups = new LinkedHashMap<>();
     String comment;
+    public Report() {
+        this.name = "";
+        this.date = LocalDateTime.now(ZoneOffset.UTC);
+    }
     public Report(@NonNull String name) {
         this.name = name;
-        this.date = LocalDateTime.now();
+        this.date = LocalDateTime.now(ZoneOffset.UTC);
     }
-    public Report addRow(@NonNull String group, @NonNull String code, @NonNull String name, String value, int status, String comment) {
+    public Report addRow(ReportRow row) {
         synchronized (rows) {
-            getRows().add(new ReportRow(group, code, name, value, status, comment));
-        }
-        return this;
-    }
-    public Report addError(@NonNull String group, @NonNull String code, @NonNull String name, String value, String comment) {
-        synchronized (rows) {
-            getRows().add(new ReportRow(group, code, name, value, ReportRow.STATUS_ERROR, comment));
-        }
-        return this;
-    }
-    public Report addOk(@NonNull String group, @NonNull String code, @NonNull String name, String value, String comment) {
-        synchronized (rows) {
-            getRows().add(new ReportRow(group, code, name, value, ReportRow.STATUS_OK, comment));
-        }
-        return this;
-    }
-    public Report addInfo(@NonNull String group, @NonNull String code, @NonNull String name, String value, String comment) {
-        synchronized (rows) {
-            getRows().add(new ReportRow(group, code, name, value, ReportRow.STATUS_INFO, comment));
-        }
-        return this;
-    }
-    public Report addWarn(@NonNull String group, @NonNull String code, @NonNull String name, String value, String comment) {
-        synchronized (rows) {
-            getRows().add(new ReportRow(group, code, name, value, ReportRow.STATUS_WARN, comment));
+            getRows().add(row);
         }
         return this;
     }
@@ -68,6 +54,24 @@ public class Report {
             initGroups();
             return getGroups().keySet().stream().map(this::rowsByGroup).collect(Collectors.toList());
         }
+    }
+
+    public void sortRows() {
+        synchronized (rows) {
+            getRows().sort(Comparator.comparing(ReportRow::getSort));
+        }
+    }
+    public void finished() {
+        sortRows();
+        long millis = date.toInstant(ZoneOffset.UTC).toEpochMilli();
+        long now = LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC).toEpochMilli();
+        setGenerationMs(now-millis);
+    }
+    public boolean haveErrors() {
+        return getRows().stream().anyMatch(x -> x.getStatus() == ReportRow.STATUS_ERROR);
+    }
+    public boolean haveWarnings() {
+        return getRows().stream().anyMatch(x -> x.getStatus() == ReportRow.STATUS_WARN || x.getStatus() == ReportRow.STATUS_ERROR);
     }
 
     /** Init group codes from rows in case when reporter forget to init group codes/names */
