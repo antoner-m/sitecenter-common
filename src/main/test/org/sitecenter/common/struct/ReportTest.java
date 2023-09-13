@@ -24,7 +24,7 @@ class ReportTest {
         rpt.addRow(ReportRow.error("PARENT2","IDX20","Some test 20","Error20", "no comment").setSort(20));
         rpt.addRow(ReportRow.error("PARENT","IDX1","Some test1","Error1", "no comment").setSort(1));
         rpt.finished();
-        List<ReportRow> rows = rpt.getRows();
+        List<ReportRow> rows = rpt.allRows();
         assert ("IDX1".equals(rows.get(0).getCode()));
     }
 

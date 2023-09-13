@@ -14,51 +14,79 @@ import java.util.stream.Collectors;
 @Data
 @Accessors(chain = true)
 public class Report {
+    String uuid;
+    String code;
     String name;
     LocalDateTime date;
     /** Time to generate report. */
     long generationMs;
 
-    List<ReportRow> rows = new LinkedList<>();
-    Map<String,String> groups = new LinkedHashMap<>();
+    final Map<String,ReportGroup> groups = new LinkedHashMap<>();
     String comment;
     public Report() {
+        this.uuid = UUID.randomUUID().toString();
+        this.code = null;
         this.name = "";
         this.date = LocalDateTime.now(ZoneOffset.UTC);
     }
     public Report(@NonNull String name) {
+        this.uuid = UUID.randomUUID().toString();
+        this.code = null;
+        this.name = name;
+        this.date = LocalDateTime.now(ZoneOffset.UTC);
+    }
+    public Report(@NonNull String code, @NonNull String name) {
+        this.uuid = UUID.randomUUID().toString();
+        this.code = code;
         this.name = name;
         this.date = LocalDateTime.now(ZoneOffset.UTC);
     }
     public Report addRow(ReportRow row) {
-        synchronized (rows) {
-            getRows().add(row);
+        if (row.getCode() == null) throw new ReportException("Code is null.");
+        if (row.getGroup() == null) throw new ReportException("Group is null.");
+        synchronized (groups) {
+            ReportGroup reportGroup = groups.get(row.getGroup());
+            if (reportGroup == null) {
+                addGroup(row.getGroup(), "");
+                reportGroup = groups.get(row.getGroup());
+            }
+
+            if (reportGroup.getRows().stream().anyMatch(x -> row.getCode().equalsIgnoreCase(x.getCode())))
+                throw new ReportException(String.format("Code:%s for Group:%s already defined in report!", row.getCode(), row.getGroup()));
+            reportGroup.getRows().add(row);
         }
         return this;
     }
 
     public Report addGroup(@NonNull String code, @NonNull  String name) {
         synchronized (groups) {
-            getGroups().put(code, name);
+            if (getGroups().keySet().stream().anyMatch(code::equalsIgnoreCase))
+                throw new ReportException(String.format("Report already have group with code:%s!", code));
+            getGroups().put(code, new ReportGroup(code, name));
         }
         return this;
     }
-    public ReportGroup rowsByGroup(@NonNull String groupCode) {
+    public ReportGroup findGroup(@NonNull String groupCode) {
         synchronized (groups) {
-            List<ReportRow> groupRows = getRows().stream().filter(row -> groupCode.equals(row.getGroup())).collect(Collectors.toList());
-            return new ReportGroup(groupCode, getGroups().get(groupCode), groupRows);
+            return groups.get(groupCode);
         }
     }
     public List<ReportGroup> reportGroups() {
         synchronized (groups) {
-            initGroups();
-            return getGroups().keySet().stream().map(this::rowsByGroup).collect(Collectors.toList());
+            return new ArrayList<>(getGroups().values());
+        }
+    }
+    public List<ReportRow> allRows() {
+        synchronized (groups) {
+            return getGroups().values().stream().flatMap(x -> x.getRows().stream()).collect(Collectors.toList());
         }
     }
 
     public void sortRows() {
-        synchronized (rows) {
-            getRows().sort(Comparator.comparing(ReportRow::getSort));
+        synchronized (groups) {
+            for (ReportGroup group : getGroups().values()) {
+                group.getRows().sort(Comparator.comparing(ReportRow::getSort));
+            }
         }
     }
     public void finished() {
@@ -68,20 +96,19 @@ public class Report {
         setGenerationMs(now-millis);
     }
     public boolean haveErrors() {
-        return getRows().stream().anyMatch(x -> x.getStatus() == ReportRow.STATUS_ERROR);
+        return getGroups().values().stream().anyMatch(ReportGroup::haveErrors);
     }
     public boolean haveWarnings() {
-        return getRows().stream().anyMatch(x -> x.getStatus() == ReportRow.STATUS_WARN || x.getStatus() == ReportRow.STATUS_ERROR);
+        return getGroups().values().stream().anyMatch(ReportGroup::haveWarnings);
     }
 
-    /** Init group codes from rows in case when reporter forget to init group codes/names */
-    private void initGroups() {
-        synchronized (groups) {
-            for (ReportRow row : rows) {
-                String groupCode = row.getGroup();
-                if (!getGroups().containsKey(groupCode))
-                    getGroups().put(groupCode, "");
-            }
+    public List<ReportRow> compare(@NonNull Report report) {
+        List<ReportRow> result = new ArrayList<>();
+        for (ReportGroup thisGroup: this.getGroups().values()) {
+            ReportGroup comparedGroup = report.findGroup(thisGroup.getCode());
+            List<ComparedRow> resultCompare = thisGroup.compare(comparedGroup);
+            result.addAll(resultCompare);
         }
+        return result;
     }
 }
