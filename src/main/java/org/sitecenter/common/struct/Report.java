@@ -1,12 +1,10 @@
 package org.sitecenter.common.struct;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,68 +16,120 @@ public class Report {
     String code;
     String name;
     LocalDateTime date;
-    /** Time to generate report. */
+    /**
+     * Time to generate report.
+     */
     long generationMs;
+//    boolean strictCodes = true;
 
-    final Map<String,ReportGroup> groups = new LinkedHashMap<>();
+    final Map<String, ReportGroup> groups = new LinkedHashMap<>();
     String comment;
+
     public Report() {
         this.uuid = UUID.randomUUID().toString();
         this.code = null;
         this.name = "";
         this.date = LocalDateTime.now(ZoneOffset.UTC);
     }
+
     public Report(@NonNull String name) {
         this.uuid = UUID.randomUUID().toString();
         this.code = null;
         this.name = name;
         this.date = LocalDateTime.now(ZoneOffset.UTC);
     }
+
     public Report(@NonNull String code, @NonNull String name) {
         this.uuid = UUID.randomUUID().toString();
         this.code = code;
         this.name = name;
         this.date = LocalDateTime.now(ZoneOffset.UTC);
     }
-    public Report addRow(ReportRow row) {
-        if (row.getCode() == null) throw new ReportException("Code is null.");
-        if (row.getGroup() == null) throw new ReportException("Group is null.");
-        synchronized (groups) {
-            ReportGroup reportGroup = groups.get(row.getGroup());
-            if (reportGroup == null) {
-                addGroup(row.getGroup(), "");
-                reportGroup = groups.get(row.getGroup());
-            }
 
-            if (reportGroup.getRows().stream().anyMatch(x -> row.getCode().equalsIgnoreCase(x.getCode())))
-                throw new ReportException(String.format("Code:%s for Group:%s already defined in report!", row.getCode(), row.getGroup()));
-            reportGroup.getRows().add(row);
+    //------------------------------------------------------------------------------------------------------------------
+    public Report addRow(ReportRow row) {
+        if (row.getGroup() == null) throw new ReportException("Group is null.");
+
+        synchronized (groups) {
+            ReportGroup reportGroup = findOrCreateGroup(row.getGroup());
+            reportGroup.addRow(row);
         }
         return this;
     }
+    public Report error(@NonNull String group, @NonNull String code, @NonNull String name, String value, String comment) {
+        ReportGroup reportGroup = findOrCreateGroup(group);
+        if (reportGroup == null) return null;
+        reportGroup.error(code, name, value, comment);
+        return this;
+    }
 
-    public Report addGroup(@NonNull String code, @NonNull  String name) {
+    public Report ok(@NonNull String group, @NonNull String code, @NonNull String name, String value, String comment) {
+        ReportGroup reportGroup = findOrCreateGroup(group);
+        if (reportGroup == null) return null;
+        reportGroup.ok(code, name, value, comment);
+        return this;
+    }
+
+    public Report info(@NonNull String group, @NonNull String code, @NonNull String name, String value, String comment) {
+        ReportGroup reportGroup = findOrCreateGroup(group);
+        if (reportGroup == null) return null;
+        reportGroup.info(code, name, value, comment);
+        return this;
+    }
+
+    public Report warn(@NonNull String group, @NonNull String code, @NonNull String name, String value, String comment) {
+        ReportGroup reportGroup = findOrCreateGroup(group);
+        if (reportGroup == null) return null;
+        reportGroup.warn(code, name, value, comment);
+        return this;
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+    public ReportGroup addGroup(@NonNull String code, @NonNull String name) {
         synchronized (groups) {
             if (getGroups().keySet().stream().anyMatch(code::equalsIgnoreCase))
                 throw new ReportException(String.format("Report already have group with code:%s!", code));
-            getGroups().put(code, new ReportGroup(code, name));
+            ReportGroup group = new ReportGroup(code, name);
+            getGroups().put(code, group);
+            return group;
         }
-        return this;
     }
+
     public ReportGroup findGroup(@NonNull String groupCode) {
         synchronized (groups) {
             return groups.get(groupCode);
         }
     }
+    public ReportGroup findOrCreateGroup(@NonNull String groupCode) {
+        synchronized (groups) {
+            ReportGroup group = groups.get(groupCode);
+            if (group != null) return group;
+            return addGroup(groupCode, "");
+        }
+    }
+
     public List<ReportGroup> reportGroups() {
         synchronized (groups) {
             return new ArrayList<>(getGroups().values());
         }
     }
+    //------------------------------------------------------------------------------------------------------------------
+
     public List<ReportRow> allRows() {
         synchronized (groups) {
             return getGroups().values().stream().flatMap(x -> x.getRows().stream()).collect(Collectors.toList());
         }
+    }
+
+    public Optional<ReportRow> getRow(@NonNull String groupCode, @NonNull String code) {
+        ReportGroup group = findGroup(groupCode);
+        if (group == null) return null;
+        return group.getRow(code);
+    }
+
+    public Optional<String> getRowValue(@NonNull String groupCode, @NonNull String code) {
+        Optional<ReportRow> row = getRow(groupCode, code);
+        return row.map(ReportRow::getValue);
     }
 
     public void sortRows() {
@@ -89,22 +139,26 @@ public class Report {
             }
         }
     }
+    //------------------------------------------------------------------------------------------------------------------
+
     public void finished() {
         sortRows();
         long millis = date.toInstant(ZoneOffset.UTC).toEpochMilli();
         long now = LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC).toEpochMilli();
-        setGenerationMs(now-millis);
+        setGenerationMs(now - millis);
     }
+
     public boolean haveErrors() {
         return getGroups().values().stream().anyMatch(ReportGroup::haveErrors);
     }
+
     public boolean haveWarnings() {
         return getGroups().values().stream().anyMatch(ReportGroup::haveWarnings);
     }
 
     public List<ReportRow> compare(@NonNull Report report) {
         List<ReportRow> result = new ArrayList<>();
-        for (ReportGroup thisGroup: this.getGroups().values()) {
+        for (ReportGroup thisGroup : this.getGroups().values()) {
             ReportGroup comparedGroup = report.findGroup(thisGroup.getCode());
             List<ComparedRow> resultCompare = thisGroup.compare(comparedGroup);
             result.addAll(resultCompare);
