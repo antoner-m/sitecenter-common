@@ -1,0 +1,1 @@
+java -cp ./sitecenter-common.jar org.sitecenter.common.infra.DirSync $1 $2 $3

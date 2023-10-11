@@ -1,0 +1,1 @@
+java -cp .\sitecenter-common.jar org.sitecenter.common.infra.DirSync "D:\temp\dirsync\source" "E:\temp\dirsync\dest" "C:\tmp\dirsync\move"
