@@ -82,9 +82,9 @@ public class DirSync {
             try {
                 FileUtil.createFolder(destFile.getParentFile().getAbsolutePath());
                 Files.move(pathAbsolute, pathMove, StandardCopyOption.REPLACE_EXISTING);
-                System.out.println(pathSource.toAbsolutePath().toString()+" moved to "+ destFile.getAbsolutePath());
+                System.out.println(pathAbsolute.toAbsolutePath().toString()+" moved to "+ destFile.getAbsolutePath());
             } catch (IOException e) {
-                System.out.println("Cannot move file from "+pathSource.toAbsolutePath().toString()+" to "+ destFile.getAbsolutePath()+" skipping:");
+                System.out.println("Cannot move file from "+pathAbsolute.toAbsolutePath().toString()+" to "+ destFile.getAbsolutePath()+" skipping:");
                 e.printStackTrace();
             }
         }
