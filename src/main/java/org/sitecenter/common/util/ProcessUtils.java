@@ -20,16 +20,16 @@ public class ProcessUtils {
             Process p = Runtime.getRuntime().exec(cmd);
             stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
             stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-            int exitValue = p.waitFor();
             String s;
             // read the output from the command
             while ((s = stdInput.readLine()) != null) {
-                result.append(s);
+                result.append(s);result.append("\n");
             }
             // read any errors from the attempted command
             while ((s = stdError.readLine()) != null) {
                 log.error(s);
             }
+            int exitValue = p.waitFor();
             p.destroy();
             return result.toString();
         } catch (IOException e) {
