@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class LocalLocalDateUtilsTest {
+class LocalDateUtilsTest {
     @Test
     void getDate() {
 
@@ -53,6 +53,9 @@ class LocalLocalDateUtilsTest {
         assertEquals(LocalDateTime.of(2019,2,18,0,0,0), LocalDateUtils.getDate("20190218 #19329631"));
 
         assertEquals(LocalDateTime.of(2024,6,28,0,59,59), LocalDateUtils.getDate("28/06/2024 00:59:59"));
+
+        assertEquals(LocalDateTime.of(2021,2,1,10,46,2), LocalDateUtils.getDate("01-02-2021 11:46:02 GMT+1"));
+
 
 //        assertEquals(LocalDateTime.of(2015,9,29,4,57,40), LocalDateUtils.getDate("2015-29-09T04:57:40Z"));
 

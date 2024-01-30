@@ -24,7 +24,6 @@ public class LocalDateUtils {
                 result = LocalDateTime.parse(str);
                 return result;
             } catch (Exception ex) {
-//                ex.printStackTrace();
                 log.debug("Error parsing date0:[" + str + "]:", ex);
             }
         if (str.contains("Z") && str.contains("T"))
@@ -210,6 +209,27 @@ public class LocalDateUtils {
 
 
         if (str.contains(" ") && str.contains("-") && str.contains(":")) {
+            try {
+                ZonedDateTime dateTime = ZonedDateTime.parse(str, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss z",Locale.US));
+                LocalDateTime dateTimeUTC = LocalDateTime.ofInstant(dateTime.toInstant(), ZoneOffset.UTC);
+                return dateTimeUTC;
+            } catch (Exception ex) {
+                log.debug("Error parsing date91:[" + str + "]:", ex);
+            }
+            try {
+                ZonedDateTime dateTime = ZonedDateTime.parse(str, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss Z",Locale.US));
+                LocalDateTime dateTimeUTC = LocalDateTime.ofInstant(dateTime.toInstant(), ZoneOffset.UTC);
+                return dateTimeUTC;
+            } catch (Exception ex) {
+                log.debug("Error parsing date91:[" + str + "]:", ex);
+            }
+            try {
+                ZonedDateTime dateTime = ZonedDateTime.parse(str, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss O",Locale.US));
+                LocalDateTime dateTimeUTC = LocalDateTime.ofInstant(dateTime.toInstant(), ZoneOffset.UTC);
+                return dateTimeUTC;
+            } catch (Exception ex) {
+                log.debug("Error parsing date91:[" + str + "]:", ex);
+            }
             try {
                 String substring = str.substring(0, 19);
                 LocalDateTime dateTime = LocalDateTime.parse(substring, DateTimeFormatter.ofPattern("yyyy-MM-dd' 'HH:mm:ss"));
