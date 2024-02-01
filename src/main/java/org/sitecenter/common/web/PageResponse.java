@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,6 +38,9 @@ public class PageResponse<T> extends PageImpl<T> {
     public PageResponse(final List<T> content, final long totalElements, final Pageable pageable) {
         super(content, pageable, totalElements);
     }
+    public PageResponse(final List<T> content, final Pageable pageable, final long totalElements) {
+        super(content, pageable, totalElements);
+    }
 
     public int getPage() {
         return getNumber();
@@ -47,6 +51,10 @@ public class PageResponse<T> extends PageImpl<T> {
         return getSort().stream()
                 .map(order -> order.getProperty() + "," + order.getDirection().name())
                 .collect(Collectors.toList());
+    }
+
+    public static PageResponse empty(Pageable pageable) {
+        return new PageResponse(Collections.emptyList(), 0, pageable);
     }
 
 }
