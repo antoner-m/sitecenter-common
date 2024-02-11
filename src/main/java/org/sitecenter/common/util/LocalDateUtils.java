@@ -207,6 +207,15 @@ public class LocalDateUtils {
             }
         }
 
+        if (str.contains(" ") && str.contains(".")  && str.contains(":")) {
+            try {
+                LocalDateTime dateTime = LocalDateTime.parse(str, DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
+                return dateTime;
+            } catch (Exception ex) {
+                log.debug("Error parsing date1021:[" + str + "]:", ex);
+            }
+        }
+
 
         if (str.contains(" ") && str.contains("-") && str.contains(":")) {
             try {
@@ -239,6 +248,21 @@ public class LocalDateUtils {
                 log.debug("Error parsing date9:[" + str + "]:", ex);
             }
         }
+
+        // -------------------------------------------------------------------------------------------------------------
+        if (str.contains(" ") && !str.contains(":"))
+        {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.US);
+
+            try {
+                LocalDate dateTime = LocalDate.parse(str, formatter);
+                return dateTime.atStartOfDay();
+            } catch (Exception ex) {
+                log.debug("Error parsing date9:[" + str + "]:", ex);
+            }
+        }
+
+
         if (str.contains("T") && str.contains("-") && str.contains(":") && str.contains("Z")) {
             try {
                 String substring = str.substring(0, 19);
