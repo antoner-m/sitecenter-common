@@ -10,14 +10,14 @@ class LocalDateUtilsTest {
     @Test
     void getDate() {
 
-        assertEquals(LocalDateTime.of(2023,04,30,12,22,36), LocalDateUtils.getDate("2023-04-30T12:22:36Z"));
-        assertEquals(LocalDateTime.of(2023,01,13,18,17,48), LocalDateUtils.getDate("2023.01.13T18:17:48+0000"));
-        assertEquals(LocalDateTime.of(2023,01,13,18,17,48), LocalDateUtils.getDate("2023-01-13T18:17:48+0000"));
-        assertEquals(LocalDateTime.of(2003,06,29,18,24,40), LocalDateUtils.getDate("2003-06-29T18:24:40Z"));
-        assertEquals(LocalDateTime.of(2003,06,29,18,24,40), LocalDateUtils.getDate("2003-06-29T18:24:40"));
+        assertEquals(LocalDateTime.of(2023,4,30,12,22,36), LocalDateUtils.getDate("2023-04-30T12:22:36Z"));
+        assertEquals(LocalDateTime.of(2023,1,13,18,17,48), LocalDateUtils.getDate("2023.01.13T18:17:48+0000"));
+        assertEquals(LocalDateTime.of(2023,1,13,18,17,48), LocalDateUtils.getDate("2023-01-13T18:17:48+0000"));
+        assertEquals(LocalDateTime.of(2003,6,29,18,24,40), LocalDateUtils.getDate("2003-06-29T18:24:40Z"));
+        assertEquals(LocalDateTime.of(2003,6,29,18,24,40), LocalDateUtils.getDate("2003-06-29T18:24:40"));
 
-        assertEquals(LocalDateTime.of(2003,06,29,0,0), LocalDateUtils.getDate("2003-06-29"));
-        assertEquals(LocalDateTime.of(2024,03,29,0,0), LocalDateUtils.getDate("2024.03.29"));
+        assertEquals(LocalDateTime.of(2003,6,29,0,0), LocalDateUtils.getDate("2003-06-29"));
+        assertEquals(LocalDateTime.of(2024,3,29,0,0), LocalDateUtils.getDate("2024.03.29"));
         assertEquals(LocalDateTime.of(2022,8,24,2,17,5), LocalDateUtils.getDate("2022-08-24 02:17:05"));
         assertEquals(LocalDateTime.of(2023,6,8,21,13,45), LocalDateUtils.getDate("2023-06-09T00:13:45+03:00"));
         assert(LocalDateUtils.getDate("2023-06-fdlkjnsdfljk09T00:13:45+03:00") == null);
@@ -25,13 +25,13 @@ class LocalDateUtilsTest {
         assertEquals(LocalDateTime.of(2023,9,22,10,46,31), LocalDateUtils.getDate("2023-09-22T10:46:31Z"));
         assertEquals(LocalDateTime.of(1,1,1,0,0,0), LocalDateUtils.getDate("0001-01-01T00:00:00.00Z"));
 
-        assertEquals(LocalDateTime.of(2023,05,15,07,05,50), LocalDateUtils.getDate("2023-05-15t07:05:50z"));
-        assertEquals(LocalDateTime.of(2024,12,11,00,00,00), LocalDateUtils.getDate("2024-12-11T00:00:00+01:00Z"));
+        assertEquals(LocalDateTime.of(2023,5,15,7,5,50), LocalDateUtils.getDate("2023-05-15t07:05:50z"));
+        assertEquals(LocalDateTime.of(2024,12,11,0,0,0), LocalDateUtils.getDate("2024-12-11T00:00:00+01:00Z"));
 
-        assertEquals(LocalDateTime.of(2024,06,24,00,00,00), LocalDateUtils.getDate("2024-06-24 00:00:00.000"));
+        assertEquals(LocalDateTime.of(2024,6,24,0,0,0), LocalDateUtils.getDate("2024-06-24 00:00:00.000"));
 
         //(KST) is 9 hours ahead of Coordinated Universal Time (UTC)
-        assertEquals(LocalDateTime.of(2023,06,27,01,39,58), LocalDateUtils.getDate("2023-06-27 10:39:58 KST"));
+        assertEquals(LocalDateTime.of(2023,6,27,1,39,58), LocalDateUtils.getDate("2023-06-27 10:39:58 KST"));
 
         assertEquals(LocalDateTime.of(2021,9,17,8,40,10), LocalDateUtils.getDate("2021-09-17T08:40:10+0000Z"));
 
