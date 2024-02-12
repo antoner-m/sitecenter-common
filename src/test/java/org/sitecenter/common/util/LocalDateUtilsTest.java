@@ -60,6 +60,10 @@ class LocalDateUtilsTest {
 
         assertEquals(LocalDateTime.of(2019,8,8,1,10,59), LocalDateUtils.getDate("08.08.2019 01:10:59"));
 
+        assertEquals(LocalDateTime.of(2024,3,28,0,0,0), LocalDateUtils.getDate("20240328"));
+
+        assertEquals(LocalDateTime.of(2025,3,29,0,0,0), LocalDateUtils.getDate("29032025"));
+
 
 //        assertEquals(LocalDateTime.of(2015,9,29,4,57,40), LocalDateUtils.getDate("2015-29-09T04:57:40Z"));
 

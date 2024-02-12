@@ -108,7 +108,21 @@ public class LocalDateUtils {
             } catch (Exception ex) {
                 log.debug("Error parsing date73:[" + str + "]:", ex);
             }
-
+        }
+        //20240328
+        if (str.length() == 8)
+        try {
+            int year = Integer.valueOf(str.substring(0,4));
+            int month = Integer.valueOf(str.substring(4,6));
+            if (year > 1900 && year < 2200 && month >0 && month <=12) {
+                return LocalDate.parse(str, DateTimeFormatter.ofPattern("yyyyMMdd")).atStartOfDay();
+            }
+            year = Integer.valueOf(str.substring(4,8));
+            if (year > 1900 && year < 2200) {
+                return LocalDate.parse(str, DateTimeFormatter.ofPattern("ddMMyyyy")).atStartOfDay();
+            }
+        } catch (Exception ex) {
+            log.debug("Error parsing date731:[" + str + "]:", ex);
         }
 
         if (str.contains("-") && str.contains(":") && str.contains(" ")) {
