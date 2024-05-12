@@ -4,6 +4,13 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class IpUtil {
+
+    public static Long parseIPToLong(String ipAddress) {
+        if (ipAddress.contains(":"))
+            return parseIPv6ToLong(ipAddress);
+        else
+            return parseIPv4ToLong(ipAddress);
+    }
     public static Long parseIPv4ToLong(String ipAddress) {
         InetAddress inetAddress = null;
         try {
