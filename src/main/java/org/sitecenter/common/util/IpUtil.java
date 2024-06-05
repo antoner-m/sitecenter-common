@@ -92,6 +92,33 @@ public class IpUtil {
         return String.join(";", result);
     }
 
+    /**
+     * This method takes an IPv4 address as input and returns the reversed version of it.
+     *
+     * @param ipAddress The original IPv4 address in string format.
+     * @return The reversed IPv4 address in string format.
+     */
+    public static String reverseIPv4(String ipAddress) {
+        // Split the IP address into its components
+        String[] octets = ipAddress.split("\\.");
+
+        // Validate that we have exactly 4 octets
+        if (octets.length != 4) {
+            throw new IllegalArgumentException("Invalid IPv4 address format.");
+        }
+
+        // Reverse the order of the octets
+        StringBuilder reversedIp = new StringBuilder();
+        for (int i = octets.length - 1; i >= 0; i--) {
+            reversedIp.append(octets[i]);
+            if (i != 0) {
+                reversedIp.append(".");
+            }
+        }
+
+        return reversedIp.toString();
+    }
+
     // -----------------------------------------------------------------------------------------------------------------
     private static final int[] CIDR2MASK = new int[]{0x00000000, 0x80000000,
             0xC0000000, 0xE0000000, 0xF0000000, 0xF8000000, 0xFC000000,
