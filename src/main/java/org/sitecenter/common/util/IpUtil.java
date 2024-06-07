@@ -119,6 +119,27 @@ public class IpUtil {
         return reversedIp.toString();
     }
 
+    public static boolean ipv4IsPrivateRange(String ip) {
+        Long ipLong = ipV4ToLong(ip);
+        if (ipLong == null) return false;
+
+        if (ipLong >= 2130706432 && ipLong <=2147483647)
+            return true;
+        else if (ipLong >= 2851995648L && ipLong <= 2852061183L)
+            return true;
+        else if (ipLong >= 3758096384L && ipLong <= 4026531839L)
+            return true;
+        else if (ipLong >= 3221225472L && ipLong <= 3221225727L)
+            return true;
+
+        try {
+            return InetAddress.getByName(ip).isSiteLocalAddress();
+        } catch (UnknownHostException e) {
+            // ignore
+        }
+        return false;
+    }
+
     // -----------------------------------------------------------------------------------------------------------------
     private static final int[] CIDR2MASK = new int[]{0x00000000, 0x80000000,
             0xC0000000, 0xE0000000, 0xF0000000, 0xF8000000, 0xFC000000,
