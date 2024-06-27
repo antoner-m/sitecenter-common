@@ -20,14 +20,23 @@ public class PaginatorData {
     Integer totalPages;
     Integer size;
 
+    public PaginatorData(PageResponse pageResponse) {
+        if (pageResponse != null)
+            initData(pageResponse.getPage(), pageResponse.getTotalElements(), pageResponse.getSize());
+    }
+
     public PaginatorData(int page, long totalElements, int size) {
+        initData(page, totalElements, size);
+    }
+
+    private void initData(int page, long totalElements, int size) {
         this.page = page;
         this.totalElements = totalElements;
         this.size = size;
-        totalPages = (int)(totalElements/size) +1;
+        totalPages = (int) (totalElements / size) + 1;
         if (totalPages > 0) {
-            int paginatorStart = Math.max(0, Math.min(page-4, totalPages-7));
-            pageNumbers = IntStream.rangeClosed(paginatorStart, paginatorStart + Math.min(totalPages-1, 6))
+            int paginatorStart = Math.max(0, Math.min(page - 4, totalPages - 7));
+            pageNumbers = IntStream.rangeClosed(paginatorStart, paginatorStart + Math.min(totalPages - 1, 6))
                     .boxed()
                     .collect(Collectors.toList());
             nextPage = Math.min(totalPages, page + 1);
