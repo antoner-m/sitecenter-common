@@ -1,0 +1,21 @@
+package org.sitecenter.common.util;
+
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class StringUtilsTest {
+
+    @Test
+    void removeBetween() {
+        String remove1 = StringUtils.removeBetween(signal1, "-----BEGIN CERTIFICATE", "END CERTIFICATE-----");
+        assertEquals(0, remove1.length());
+        String remove2 = StringUtils.removeBetween(signal2, "-----BEGIN CERTIFICATE", "END CERTIFICATE-----");
+        assertEquals("   abc", remove2);
+        String remove3 = StringUtils.removeBetween(" a c ", "-----BEGIN CERTIFICATE", "END CERTIFICATE-----");
+        assertEquals(" a c ", remove3);
+    }
+
+    String signal1 = "-----BEGIN CERTIFICATE-----MIIDpTCCAo2gAwIBAgIUZaJ6rua90OPimbGzYk9E0agwRtowDQYJKoZIhvcNAQELBQAwYjELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxITAfBgNVBAoMGEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZDEbMBkGA1UEAwwSemFncmF2YXRyYWRpbmcuY29tMB4XDTIzMTExMDE2MTAxOVoXDTI0MTEwOTE2MTAxOVowYjELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxITAfBgNVBAoMGEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZDEbMBkGA1UEAwwSemFncmF2YXRyYWRpbmcuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtP0Di8ozRScROT0MpDpYIWYLLW0KE74kxv8CN8qkKcFf4/O4dwhVMBVb3xv0cruyqJ65a+9TOSrEYmUEIRf1+zG/XJsUhfo3EMUB/jJoOLvGsLOVnUrQY/9FwBHaDCWXGcLOdvNhh2ZctbYJOoc67Cyfbop1O+An34gx9stz76EMeU2JuPcnua+2eJgohTVddOlFpXrb+vH/imugp8gQtuCcuHuif18PKYeEQicmxlft8LDxCrQ+klrUZ3Y3AdxdTeQsnZzVYOUefhhTtskow/UaKY1dqOwqnHrnRUOlndrjmV3t6PNuYfnKKk3wXf1qeUAu7NvVxK/MBFdQOjlcSQIDAQABo1MwUTAdBgNVHQ4EFgQUtRThtBPdXY0wbCa8yPurUcTtM/wwHwYDVR0jBBgwFoAUtRThtBPdXY0wbCa8yPurUcTtM/wwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEAs3df2io+VbdZ0omUKTvRySgKqkNtNk2rlwL+Ytm08dUnujKLjv7h91cPkcG22D+r/vNSuit93+sL6v8KjjXtf1s4sZyS0FCocdMGG36K+EMy2+rq3S1VQA/x8eTyen51OG6otab85zo+Ja97STgBIHPHeG2h5y4jgG4PrICKX/ZBwMkVq3Di6Y4OVvNiYZFbCAskiHYPAfWm4YXL/ZTD2ilfUcpGAQQh70z1vve9q7Rz8VbxYQuEYN84xns25/qO0faO9gW+EzhQdT7nsIhANYn/b3KidmbsSNYdAarK45gVv/VaRJ4yRzeTlIADp1ppzyRTpKiWgT2Ggvm76KhScw==-----END CERTIFICATE-----";
+    String signal2 = "   -----BEGIN CERTIFICATE-----MIIDpTCCAo2gAwIBAgIUZaJ6rua90OPimbGzYk9E0agwRtowDQYJKoZIhvcNAQELBQAwYjELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxITAfBgNVBAoMGEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZDEbMBkGA1UEAwwSemFncmF2YXRyYWRpbmcuY29tMB4XDTIzMTExMDE2MTAxOVoXDTI0MTEwOTE2MTAxOVowYjELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxITAfBgNVBAoMGEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZDEbMBkGA1UEAwwSemFncmF2YXRyYWRpbmcuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtP0Di8ozRScROT0MpDpYIWYLLW0KE74kxv8CN8qkKcFf4/O4dwhVMBVb3xv0cruyqJ65a+9TOSrEYmUEIRf1+zG/XJsUhfo3EMUB/jJoOLvGsLOVnUrQY/9FwBHaDCWXGcLOdvNhh2ZctbYJOoc67Cyfbop1O+An34gx9stz76EMeU2JuPcnua+2eJgohTVddOlFpXrb+vH/imugp8gQtuCcuHuif18PKYeEQicmxlft8LDxCrQ+klrUZ3Y3AdxdTeQsnZzVYOUefhhTtskow/UaKY1dqOwqnHrnRUOlndrjmV3t6PNuYfnKKk3wXf1qeUAu7NvVxK/MBFdQOjlcSQIDAQABo1MwUTAdBgNVHQ4EFgQUtRThtBPdXY0wbCa8yPurUcTtM/wwHwYDVR0jBBgwFoAUtRThtBPdXY0wbCa8yPurUcTtM/wwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEAs3df2io+VbdZ0omUKTvRySgKqkNtNk2rlwL+Ytm08dUnujKLjv7h91cPkcG22D+r/vNSuit93+sL6v8KjjXtf1s4sZyS0FCocdMGG36K+EMy2+rq3S1VQA/x8eTyen51OG6otab85zo+Ja97STgBIHPHeG2h5y4jgG4PrICKX/ZBwMkVq3Di6Y4OVvNiYZFbCAskiHYPAfWm4YXL/ZTD2ilfUcpGAQQh70z1vve9q7Rz8VbxYQuEYN84xns25/qO0faO9gW+EzhQdT7nsIhANYn/b3KidmbsSNYdAarK45gVv/VaRJ4yRzeTlIADp1ppzyRTpKiWgT2Ggvm76KhScw==-----END CERTIFICATE-----abc";
+}
