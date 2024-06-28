@@ -4,12 +4,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Data
-@NoArgsConstructor
 @Accessors(chain = true)
 public class PaginatorData {
     List<Integer> pageNumbers;
@@ -19,6 +19,16 @@ public class PaginatorData {
     Long totalElements;
     Integer totalPages;
     Integer size;
+
+    public PaginatorData() {
+        pageNumbers = Collections.emptyList();
+        page=0;
+        nextPage=0;
+        prevPage=0;
+        totalPages=0;
+        totalElements=0L;
+        size=0;
+    }
 
     public PaginatorData(PageResponse pageResponse) {
         if (pageResponse != null)
