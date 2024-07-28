@@ -15,7 +15,7 @@ public class ByteArrayVariable {
     protected final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     public ByteArrayVariable(int initialCapacity, int incrementCapacity) {
-        if (initialCapacity <= 0) {
+        if (initialCapacity < 0) {
             throw new IllegalArgumentException("Initial capacity must be positive.");
         }
         if (incrementCapacity <= 0) {
@@ -46,7 +46,7 @@ public class ByteArrayVariable {
             if (fromIdx < 0 || toIdx >= size || fromIdx > toIdx) {
                 throw new IndexOutOfBoundsException("Invalid fromIdx or toIdx.");
             }
-            int numElementsToRemove = toIdx - fromIdx + 1;
+            int numElementsToRemove = toIdx - fromIdx+1;
             System.arraycopy(data, toIdx + 1, data, fromIdx, size - toIdx - 1);
             size -= numElementsToRemove;
         } finally {

@@ -16,6 +16,10 @@ class ByteArrayStructTest {
         assertEquals(2, vbs.indexOf(new byte[]{3,4,5,6,7}));
         assertEquals(1, vbs.indexOf(new byte[]{2,3,4,5,6}));
         assertEquals(0, vbs.indexOf(new byte[]{1,2,3,4,5}));
+        vbs.remove(1);
+        assertEquals(1, vbs.indexOf(new byte[]{3,4,5,6,7}));
+        vbs.add(new byte[]{4,5,6,7,8});
+        assertEquals(2, vbs.indexOf(new byte[]{4,5,6,7,8}));
     }
 
     @Test

@@ -1,5 +1,6 @@
 package org.sitecenter.common.struct;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,14 +21,46 @@ public class ByteArrayStruct {
     }
 
     public void add(byte[] bytes) {
-        if (bytes == null || bytes.length != structSize)
-            throw new IllegalArgumentException("value length is not equal to structSize.");
+        if (bytes == null)
+            throw new IllegalArgumentException("value is null.");
+        if (bytes.length != structSize)
+            throw new IllegalArgumentException("value length: "+bytes.length+" is not equal to structSize: "+structSize+".");
         byteArrayVariable.add(bytes);
+    }
+    public void addAscii(String value) {
+        add(value.getBytes(StandardCharsets.US_ASCII));
+    }
+    public void addUTF8(String value) {
+        add(value.getBytes(StandardCharsets.UTF_8));
+    }
+    public void addUTF16(String value) {
+        add(value.getBytes(StandardCharsets.UTF_16));
+    }
+
+    public byte[] get(int elementIdx) {
+        int absIdx = elementIdx*structSize;
+        byte[] result = Arrays.copyOfRange(byteArrayVariable.getData(),absIdx,absIdx+structSize);
+        return result;
+    }
+    public String getAsAscii(int elementIdx) {
+        int absIdx = elementIdx*structSize;
+        return new String(byteArrayVariable.getData(),absIdx,structSize, StandardCharsets.US_ASCII);
+    }
+    public String getAsUTF8(int elementIdx) {
+        int absIdx = elementIdx*structSize;
+        return new String(byteArrayVariable.getData(),absIdx,structSize, StandardCharsets.UTF_8);
+    }
+    public String getAsUTF16(int elementIdx) {
+        int absIdx = elementIdx*structSize;
+        return new String(byteArrayVariable.getData(),absIdx,structSize, StandardCharsets.UTF_16);
+    }
+    public int getSize() {
+        return byteArrayVariable.getSize() / structSize;
     }
 
     public void remove(int elementIdx) {
         int absIdx = elementIdx * structSize;
-        byteArrayVariable.remove(absIdx, absIdx + structSize);
+        byteArrayVariable.remove(absIdx, absIdx + structSize-1);
     }
 
     public boolean contains(byte[] searchData) {
@@ -78,17 +111,30 @@ public class ByteArrayStruct {
      * @throws IllegalArgumentException if searchData is null or its size is greater than the structSize
      */
     public List<Integer> findContains(byte[] searchData) {
+        return findContains(searchData, Integer.MAX_VALUE);
+    }
+    /**
+     * Searches for occurrences of a byte array within the data structure
+     *
+     * @param searchData the byte array to search for
+     * @return a list of integer indices where the search data is found
+     * @throws IllegalArgumentException if searchData is null or its size is greater than the structSize
+     */
+    public List<Integer> findContains(byte[] searchData, int maxElements) {
         if (searchData == null)
             throw new IllegalArgumentException("searchData is null.");
         if (searchData.length > structSize)
             throw new IllegalArgumentException("searchData size is more than structSize.");
         byteArrayVariable.getLock().readLock().lock();
         try {
-            ArrayList<Integer> result = new ArrayList<>();
+            ArrayList<Integer> result = new ArrayList<>(Math.min(1000,maxElements));
             byte[] data = byteArrayVariable.getData();
             for (int i = 0; i <= data.length - structSize; i += structSize) {
-                if (arrayContains(data, i, i + structSize, searchData))
+                if (arrayContains(data, i, i + structSize, searchData)) {
                     result.add(i / structSize);
+                    if (result.size() >= maxElements)
+                        break;
+                }
             }
             return result;
         } finally {
