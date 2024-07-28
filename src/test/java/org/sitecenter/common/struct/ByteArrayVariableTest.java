@@ -4,11 +4,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class VariableByteArrayTest {
+class ByteArrayVariableTest {
 
     @Test
     void addRemoveContains() {
-        VariableByteArray vba = new VariableByteArray(10, 5);
+        ByteArrayVariable vba = new ByteArrayVariable(10, 5);
         vba.add(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9});
         assertTrue(vba.contains(0, 8, new byte[]{4,5,6}));
         assertFalse(vba.contains(0, 8, new byte[]{4,6}));

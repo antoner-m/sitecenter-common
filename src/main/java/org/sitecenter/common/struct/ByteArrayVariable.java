@@ -2,7 +2,7 @@ package org.sitecenter.common.struct;
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class VariableByteArray {
+public class ByteArrayVariable {
 
     protected byte[] data;
     protected int size; // The actual size of the data stored
@@ -14,7 +14,7 @@ public class VariableByteArray {
 
     protected final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
-    public VariableByteArray(int initialCapacity, int incrementCapacity) {
+    public ByteArrayVariable(int initialCapacity, int incrementCapacity) {
         if (initialCapacity <= 0) {
             throw new IllegalArgumentException("Initial capacity must be positive.");
         }

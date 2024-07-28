@@ -4,11 +4,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class VariableByteArrayStructTest {
+class ByteArrayStructTest {
 
     @Test
     void structIndexOf() {
-        VariableByteArrayStruct vbs = new VariableByteArrayStruct(1000, 10, 5);
+        ByteArrayStruct vbs = new ByteArrayStruct(1000, 10, 5);
         vbs.add(new byte[]{1,2,3,4,5});
         vbs.add(new byte[]{2,3,4,5,6});
         vbs.add(new byte[]{3,4,5,6,7});
@@ -20,7 +20,7 @@ class VariableByteArrayStructTest {
 
     @Test
     void structContains() {
-        VariableByteArrayStruct vbs = new VariableByteArrayStruct(1000, 10, 5);
+        ByteArrayStruct vbs = new ByteArrayStruct(1000, 10, 5);
         vbs.add(new byte[]{1,2,3,4,5});
         vbs.add(new byte[]{2,3,4,5,6});
         vbs.add(new byte[]{3,4,5,6,7});
@@ -43,9 +43,9 @@ class VariableByteArrayStructTest {
     void arrayContains() {
         byte[]source = {1,2,3,4,5,6,7};
 
-        assertTrue(VariableByteArrayStruct.arrayContains(source,2,4, new byte[]{3,4}));
-        assertTrue(VariableByteArrayStruct.arrayContains(source,0,4, new byte[]{3,4}));
-        assertTrue(VariableByteArrayStruct.arrayContains(source,0,7, new byte[]{1,2,3,4,5,6,7}));
-        assertFalse(VariableByteArrayStruct.arrayContains(source,0,7, new byte[]{1,2,4,5}));
+        assertTrue(ByteArrayStruct.arrayContains(source,2,4, new byte[]{3,4}));
+        assertTrue(ByteArrayStruct.arrayContains(source,0,4, new byte[]{3,4}));
+        assertTrue(ByteArrayStruct.arrayContains(source,0,7, new byte[]{1,2,3,4,5,6,7}));
+        assertFalse(ByteArrayStruct.arrayContains(source,0,7, new byte[]{1,2,4,5}));
     }
 }

@@ -7,12 +7,12 @@ import java.util.List;
 /**
  * This class represents a variable-sized byte array data structure that stores internal record structures of fixed size.
  */
-public class VariableByteArrayStruct {
-    private VariableByteArray variableByteArray;
+public class ByteArrayStruct {
+    private ByteArrayVariable byteArrayVariable;
     private int structSize = 1; //size of internal record in array
 
-    public VariableByteArrayStruct(int initialCapacityElements, int incrementElements, int structSize) {
-        variableByteArray = new VariableByteArray(initialCapacityElements * structSize, incrementElements * structSize);
+    public ByteArrayStruct(int initialCapacityElements, int incrementElements, int structSize) {
+        byteArrayVariable = new ByteArrayVariable(initialCapacityElements * structSize, incrementElements * structSize);
         if (structSize <= 0) {
             throw new IllegalArgumentException("Struct size must be positive.");
         }
@@ -22,12 +22,12 @@ public class VariableByteArrayStruct {
     public void add(byte[] bytes) {
         if (bytes == null || bytes.length != structSize)
             throw new IllegalArgumentException("value length is not equal to structSize.");
-        variableByteArray.add(bytes);
+        byteArrayVariable.add(bytes);
     }
 
     public void remove(int elementIdx) {
         int absIdx = elementIdx * structSize;
-        variableByteArray.remove(absIdx, absIdx + structSize);
+        byteArrayVariable.remove(absIdx, absIdx + structSize);
     }
 
     public boolean contains(byte[] searchData) {
@@ -49,10 +49,10 @@ public class VariableByteArrayStruct {
         if (searchData.length != structSize)
             throw new IllegalArgumentException("searchData size is not equal to structSize.");
 
-        variableByteArray.getLock().readLock().lock();
+        byteArrayVariable.getLock().readLock().lock();
         try {
-            byte[] data = variableByteArray.getData();
-            int size = variableByteArray.getSize();
+            byte[] data = byteArrayVariable.getData();
+            int size = byteArrayVariable.getSize();
             if (searchData.length == 0) {
                 return -1;
             }
@@ -66,7 +66,7 @@ public class VariableByteArrayStruct {
             }
             return -1;
         } finally {
-            variableByteArray.getLock().readLock().unlock();
+            byteArrayVariable.getLock().readLock().unlock();
         }
     }
 
@@ -82,21 +82,21 @@ public class VariableByteArrayStruct {
             throw new IllegalArgumentException("searchData is null.");
         if (searchData.length > structSize)
             throw new IllegalArgumentException("searchData size is more than structSize.");
-        variableByteArray.getLock().readLock().lock();
+        byteArrayVariable.getLock().readLock().lock();
         try {
             ArrayList<Integer> result = new ArrayList<>();
-            byte[] data = variableByteArray.getData();
+            byte[] data = byteArrayVariable.getData();
             for (int i = 0; i <= data.length - structSize; i += structSize) {
                 if (arrayContains(data, i, i + structSize, searchData))
                     result.add(i / structSize);
             }
             return result;
         } finally {
-            variableByteArray.getLock().readLock().unlock();
+            byteArrayVariable.getLock().readLock().unlock();
         }
     }
-    public VariableByteArray getVariableByteArray() {
-        return variableByteArray;
+    public ByteArrayVariable getVariableByteArray() {
+        return byteArrayVariable;
     }
 
     public int getStructSize() {
