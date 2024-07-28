@@ -4,14 +4,22 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class VariableByteArray {
 
-    private byte[] data;
-    private int size; // The actual size of the data stored
-    private int incrementCapacity; //How many elements add to array when it's size is not enough
-    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    protected byte[] data;
+    protected int size; // The actual size of the data stored
+    protected int incrementCapacity; //How many elements add to array when it's size is not enough
+
+    public ReentrantReadWriteLock getLock() {
+        return lock;
+    }
+
+    protected final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     public VariableByteArray(int initialCapacity, int incrementCapacity) {
         if (initialCapacity <= 0) {
             throw new IllegalArgumentException("Initial capacity must be positive.");
+        }
+        if (incrementCapacity <= 0) {
+            throw new IllegalArgumentException("Increment capacity must be positive.");
         }
         this.data = new byte[initialCapacity];
         this.size = 0;
@@ -101,8 +109,17 @@ public class VariableByteArray {
             lock.readLock().unlock();
         }
     }
+    public void clear() {
+        lock.writeLock().lock();
+        try {
+            size = 0;
+            data = new byte[incrementCapacity];
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
 
-    private void ensureCapacity(int minCapacity) {
+    protected void ensureCapacity(int minCapacity) {
         if (minCapacity > data.length) {
             int newCapacity = Math.max(data.length + incrementCapacity, minCapacity);
             byte[] newData = new byte[newCapacity];
