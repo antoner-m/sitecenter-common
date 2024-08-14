@@ -238,9 +238,14 @@ public class LocalDateUtils {
                 log.debug("Error parsing date102-2:[" + str + "]:", ex);
             }
             try {
-                return LocalDateTime.parse(str, DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss"));
+                return LocalDateTime.parse(str, DateTimeFormatter.ofPattern("yyyy/M/dd H:mm:ss"));
             } catch (Exception ex) {
                 log.debug("Error parsing date102-3:[" + str + "]:", ex);
+            }
+            try {
+                return LocalDateTime.parse(str, DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss"));
+            } catch (Exception ex) {
+                log.debug("Error parsing date102-4:[" + str + "]:", ex);
             }
         }
 
