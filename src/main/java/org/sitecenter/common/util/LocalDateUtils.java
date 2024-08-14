@@ -19,6 +19,32 @@ public class LocalDateUtils {
         str = str.trim();
         if (str.contains("z") || str.contains("t")) str = str.toUpperCase();
         LocalDateTime result = null;
+        if (matchesDatePattern_DD_MMM_YYYY(str)) {
+            try {
+                DateTimeFormatter dTF = new DateTimeFormatterBuilder().parseCaseInsensitive()
+                        .appendPattern("dd MMM yyyy")
+                        .toFormatter(Locale.ENGLISH);
+                LocalDate dateTime = LocalDate.parse(str, dTF);
+//                log.warn("Unknown date format:[" + str + "]. Parsing as \"dd-M/L-yyyy HH:mm:ss\"");
+                return dateTime.atStartOfDay();
+            } catch (Exception ex) {
+                log.debug("Error parsing date-DD-MMM-YYYY:[" + str + "]:", ex);
+            }
+        }
+        if (str.contains("0-UANIC "))
+            try {
+                // Extract the date-time part from the input string
+                String dateTimePart = str.substring(str.indexOf(" ") + 1);
+
+                // Define the date-time format pattern
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+
+                // Parse the date-time part into a LocalDateTime object
+                LocalDateTime dateTime = LocalDateTime.parse(dateTimePart, formatter);
+                return dateTime;
+            } catch (Exception ex) {
+                log.debug("Error parsing date-UANIC:[" + str + "]:", ex);
+            }
         if (!str.contains("Z") && str.contains("T"))
             try {
                 result = LocalDateTime.parse(str);
@@ -111,19 +137,19 @@ public class LocalDateUtils {
         }
         //20240328
         if (str.length() == 8)
-        try {
-            int year = Integer.valueOf(str.substring(0,4));
-            int month = Integer.valueOf(str.substring(4,6));
-            if (year > 1900 && year < 2200 && month >0 && month <=12) {
-                return LocalDate.parse(str, DateTimeFormatter.ofPattern("yyyyMMdd")).atStartOfDay();
+            try {
+                int year = Integer.valueOf(str.substring(0, 4));
+                int month = Integer.valueOf(str.substring(4, 6));
+                if (year > 1900 && year < 2200 && month > 0 && month <= 12) {
+                    return LocalDate.parse(str, DateTimeFormatter.ofPattern("yyyyMMdd")).atStartOfDay();
+                }
+                year = Integer.valueOf(str.substring(4, 8));
+                if (year > 1900 && year < 2200) {
+                    return LocalDate.parse(str, DateTimeFormatter.ofPattern("ddMMyyyy")).atStartOfDay();
+                }
+            } catch (Exception ex) {
+                log.debug("Error parsing date731:[" + str + "]:", ex);
             }
-            year = Integer.valueOf(str.substring(4,8));
-            if (year > 1900 && year < 2200) {
-                return LocalDate.parse(str, DateTimeFormatter.ofPattern("ddMMyyyy")).atStartOfDay();
-            }
-        } catch (Exception ex) {
-            log.debug("Error parsing date731:[" + str + "]:", ex);
-        }
 
         if (str.contains("-") && str.contains(":") && str.contains(" ")) {
             try {
@@ -188,62 +214,51 @@ public class LocalDateUtils {
 
         if (str.contains(" ") && str.contains("#")) {
             try {
-                LocalDate dateTime = LocalDate.parse(str.substring(0,8), DateTimeFormatter.ofPattern("yyyyMMdd"));
+                LocalDate dateTime = LocalDate.parse(str.substring(0, 8), DateTimeFormatter.ofPattern("yyyyMMdd"));
                 return dateTime.atStartOfDay();
             } catch (Exception ex) {
                 log.debug("Error parsing date102:[" + str + "]:", ex);
             }
         }
 
-        if (str.contains(" ") && str.contains("/")  && str.contains(":")) {
+        if (str.contains(" ") && str.contains("/") && str.contains(":")) {
             try {
                 return LocalDateTime.parse(str, DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
             } catch (Exception ex) {
                 log.debug("Error parsing date102:[" + str + "]:", ex);
             }
+            try {
+                return LocalDateTime.parse(str, DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+            } catch (Exception ex) {
+                log.debug("Error parsing date102-1:[" + str + "]:", ex);
+            }
+            try {
+                return LocalDateTime.parse(str, DateTimeFormatter.ofPattern("yyyy/M/dd HH:mm:ss"));
+            } catch (Exception ex) {
+                log.debug("Error parsing date102-2:[" + str + "]:", ex);
+            }
+            try {
+                return LocalDateTime.parse(str, DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss"));
+            } catch (Exception ex) {
+                log.debug("Error parsing date102-3:[" + str + "]:", ex);
+            }
         }
 
-        if (str.contains(" ") && str.contains(".")  && str.contains(":")) {
+        if (str.contains(" ") && str.contains(".") && str.contains(":")) {
             try {
                 return LocalDateTime.parse(str, DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
             } catch (Exception ex) {
                 log.debug("Error parsing date1021:[" + str + "]:", ex);
             }
-        }
 
-
-        if (str.contains(" ") && str.contains("-") && str.contains(":")) {
             try {
-                ZonedDateTime dateTime = ZonedDateTime.parse(str, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss z",Locale.US));
-                return LocalDateTime.ofInstant(dateTime.toInstant(), ZoneOffset.UTC);
+                return LocalDateTime.parse(str, DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss"));
             } catch (Exception ex) {
-                log.debug("Error parsing date91:[" + str + "]:", ex);
-            }
-            try {
-                ZonedDateTime dateTime = ZonedDateTime.parse(str, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss Z",Locale.US));
-                return LocalDateTime.ofInstant(dateTime.toInstant(), ZoneOffset.UTC);
-            } catch (Exception ex) {
-                log.debug("Error parsing date91:[" + str + "]:", ex);
-            }
-            try {
-                ZonedDateTime dateTime = ZonedDateTime.parse(str, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss O",Locale.US));
-                return LocalDateTime.ofInstant(dateTime.toInstant(), ZoneOffset.UTC);
-            } catch (Exception ex) {
-                log.debug("Error parsing date91:[" + str + "]:", ex);
-            }
-            try {
-                String substring = str.substring(0, 19);
-                LocalDateTime dateTime = LocalDateTime.parse(substring, DateTimeFormatter.ofPattern("yyyy-MM-dd' 'HH:mm:ss"));
-                log.warn("Unknown date format:[" + str + "]. Parsing as \"yyyy-MM-dd' 'HH:mm:ss\"");
-                return dateTime;
-            } catch (Exception ex) {
-                log.debug("Error parsing date9:[" + str + "]:", ex);
+                log.debug("Error parsing date1022:[" + str + "]:", ex);
             }
         }
 
-        // -------------------------------------------------------------------------------------------------------------
-        if (str.contains(" ") && !str.contains(":"))
-        {
+        if (str.contains(" ") && !str.contains(":")) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.US);
 
             try {
@@ -259,7 +274,7 @@ public class LocalDateUtils {
             try {
                 String substring = str.substring(0, 19);
                 LocalDateTime dateTime = LocalDateTime.parse(substring, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
-                log.warn("Unknown date format:[" + str + "]. Parsing as \"yyyy-MM-dd'T'HH:mm:ss\"");
+//                log.warn("Unknown date format:[" + str + "]. Parsing as \"yyyy-MM-dd'T'HH:mm:ss\"");
                 return dateTime;
             } catch (Exception ex) {
                 log.debug("Error parsing date9:[" + str + "]:", ex);
@@ -269,25 +284,99 @@ public class LocalDateUtils {
             try {
                 String substring = str.substring(0, str.indexOf("UTC"));
                 LocalDateTime dateTime = LocalDateTime.parse(substring, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
-                log.warn("Unknown date format:[" + str + "]. Parsing as \"yyyy-MM-dd'T'HH:mm:ss\"");
+//                log.warn("Unknown date format:[" + str + "]. Parsing as \"yyyy-MM-dd'T'HH:mm:ss\"");
+                return dateTime;
+            } catch (Exception ex) {
+                log.debug("Error parsing date10:[" + str + "]:", ex);
+            }
+            try {
+                String substring = str.substring(0, str.indexOf("UTC"));
+                LocalDateTime dateTime = LocalDateTime.parse(substring, DateTimeFormatter.ofPattern("dd-MMM-yyyy'T'HH:mm:ss"));
+//                log.warn("Unknown date format:[" + str + "]. Parsing as \"dd-MMM-yyyy'T'HH:mm:ss\"");
+                return dateTime;
+            } catch (Exception ex) {
+                log.debug("Error parsing date10:[" + str + "]:", ex);
+            }
+        }
+        if (str.contains(" ") && str.contains("-") && str.contains(":") && str.contains("UTC")) {
+            String substring = str.substring(0, str.indexOf("UTC"));
+            substring = substring.trim();
+            try {
+                LocalDateTime dateTime = LocalDateTime.parse(substring, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+//                log.warn("Unknown date format:[" + str + "]. Parsing as \"yyyy-MM-dd HH:mm:ss\"");
+                return dateTime;
+            } catch (Exception ex) {
+                log.debug("Error parsing date10:[" + str + "]:", ex);
+            }
+            try {
+                DateTimeFormatter dTF = new DateTimeFormatterBuilder().parseCaseInsensitive()
+                        .appendPattern("dd-MMM-yyyy HH:mm:ss")
+                        .toFormatter(Locale.ENGLISH);
+                LocalDateTime dateTime = LocalDateTime.parse(substring, dTF);
+//                log.warn("Unknown date format:[" + str + "]. Parsing as \"dd-M/L-yyyy HH:mm:ss\"");
                 return dateTime;
             } catch (Exception ex) {
                 log.debug("Error parsing date10:[" + str + "]:", ex);
             }
         }
 
+        if (str.contains(" ") && str.contains("-") && str.contains(":")) {
+            try {
+                ZonedDateTime dateTime = ZonedDateTime.parse(str, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss z", Locale.US));
+                return LocalDateTime.ofInstant(dateTime.toInstant(), ZoneOffset.UTC);
+            } catch (Exception ex) {
+                log.debug("Error parsing date91:[" + str + "]:", ex);
+            }
+            try {
+                ZonedDateTime dateTime = ZonedDateTime.parse(str, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss Z", Locale.US));
+                return LocalDateTime.ofInstant(dateTime.toInstant(), ZoneOffset.UTC);
+            } catch (Exception ex) {
+                log.debug("Error parsing date91:[" + str + "]:", ex);
+            }
+            try {
+                ZonedDateTime dateTime = ZonedDateTime.parse(str, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss O", Locale.US));
+                return LocalDateTime.ofInstant(dateTime.toInstant(), ZoneOffset.UTC);
+            } catch (Exception ex) {
+                log.debug("Error parsing date91:[" + str + "]:", ex);
+            }
+            try {
+                String substring = str.substring(0, 19);
+                LocalDateTime dateTime = LocalDateTime.parse(substring, DateTimeFormatter.ofPattern("yyyy-MM-dd' 'HH:mm:ss"));
+                log.warn("Unknown date format:[" + str + "]. Parsing as \"yyyy-MM-dd' 'HH:mm:ss\"");
+                return dateTime;
+            } catch (Exception ex) {
+                log.debug("Error parsing date9:[" + str + "]:", ex);
+            }
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+
+
         log.error("Unknown date format:[" + str + "]");
         return null;
     }
+
     public static long getMilliseconds(LocalDateTime localDateTime) {
         if (localDateTime == null) return 0;
         return localDateTime.atZone(ZoneId.of("UTC")).toInstant().toEpochMilli();
     }
+
     public static boolean isDdMonWordYear(String input) {
         String regex = "^\\d{2}-(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)-\\d{4}$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(input.toLowerCase());
 
+        return matcher.matches();
+    }
+
+    // Define the regex pattern for the date format
+    private static final String DATE_PATTERN_DD_MMM_YYYY = "^\\d{2} [A-Z]{3} \\d{4}$";
+    // Create a Pattern object
+    private static final Pattern pattern_DD_MMM_YYYY = Pattern.compile(DATE_PATTERN_DD_MMM_YYYY);
+    public static boolean matchesDatePattern_DD_MMM_YYYY(String dateString) {
+        // Create a Matcher object
+        Matcher matcher = pattern_DD_MMM_YYYY.matcher(dateString);
+        // Return whether the input matches the pattern
         return matcher.matches();
     }
 

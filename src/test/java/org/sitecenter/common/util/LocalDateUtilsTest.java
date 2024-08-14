@@ -64,6 +64,22 @@ class LocalDateUtilsTest {
 
         assertEquals(LocalDateTime.of(2025,3,29,0,0,0), LocalDateUtils.getDate("29032025"));
 
+        assertEquals(LocalDateTime.of(2024,5,17,10,23,20), LocalDateUtils.getDate("2024/5/17 10:23:20"));
+
+        assertEquals(LocalDateTime.of(2025,4,22,22,49,7), LocalDateUtils.getDate("04/22/2025 22:49:07"));
+
+        assertEquals(LocalDateTime.of(2010,2,3,14,28,41), LocalDateUtils.getDate("2010.02.03 14:28:41"));
+
+        assertEquals(LocalDateTime.of(1998,9,8,13,0,0), LocalDateUtils.getDate("1998.09.08 13:00:00"));
+
+        assertEquals(LocalDateTime.of(2022,8,13,16,33,33), LocalDateUtils.getDate("2022.08.13 16:33:33"));
+
+        assertEquals(LocalDateTime.of(2011,3,4,12,40,43), LocalDateUtils.getDate("0-UANIC 20110304124043"));
+
+
+        assertEquals(LocalDateTime.of(2024,3,27,13,9,56), LocalDateUtils.getDate("27-Mar-2024 13:09:56 UTC"));
+
+        assertEquals(LocalDateTime.of(2023,10,6,0,0,0), LocalDateUtils.getDate("06 OCT 2023"));
 
 //        assertEquals(LocalDateTime.of(2015,9,29,4,57,40), LocalDateUtils.getDate("2015-29-09T04:57:40Z"));
 
