@@ -1,7 +1,6 @@
 package org.sitecenter.common.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.joda.time.DateTime;
 
 import java.text.ParseException;
 
@@ -171,13 +170,13 @@ public class LocalDateUtils {
             }
 
         }
-        try {
-            DateTime customDateTimeFromString = new DateTime(str);
-            Instant instant = Instant.ofEpochMilli(customDateTimeFromString.getMillis());
-            return LocalDateTime.ofInstant(instant, ZoneId.of(customDateTimeFromString.getZone().getID()));
-        } catch (Exception ex) {
-            log.debug("Error parsing date7 joda:[" + str + "]:", ex);
-        }
+//        try {
+//            DateTime customDateTimeFromString = new DateTime(str);
+//            Instant instant = Instant.ofEpochMilli(customDateTimeFromString.getMillis());
+//            return LocalDateTime.ofInstant(instant, ZoneId.of(customDateTimeFromString.getZone().getID()));
+//        } catch (Exception ex) {
+//            log.debug("Error parsing date7 joda:[" + str + "]:", ex);
+//        }
 
         if (str.contains(" ") && str.contains("-") && str.contains(":")) {
             try {
