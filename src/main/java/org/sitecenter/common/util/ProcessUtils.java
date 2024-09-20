@@ -7,9 +7,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
-@Slf4j
 public class ProcessUtils {
+    private static final Logger logger = Logger.getLogger(ProcessUtils.class.getName());
+
     private static final String[] EMPTY_STRING = {};
     public static String executeCommandToString(String cmd) {
         StringBuilder result = new StringBuilder();
@@ -27,7 +29,7 @@ public class ProcessUtils {
             }
             // read any errors from the attempted command
             while ((s = stdError.readLine()) != null) {
-                log.error(s);
+                logger.warning(s);
             }
 //            log.debug("\n executeCommandToString output catched: " + cmd + " ===========");
 //            int exitValue = p.waitFor();
@@ -64,7 +66,7 @@ public class ProcessUtils {
             }
             // read any errors from the attempted command
             while ((s = stdError.readLine()) != null) {
-                log.error(s);
+                logger.warning(s);
             }
 //            log.debug("\n executeCommandToStrArr: Finishing command: " + cmd + " ===========");
             p.destroy();

@@ -1,18 +1,19 @@
 package org.sitecenter.common.util;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.text.ParseException;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Slf4j
 public class LocalDateUtils {
+    private static final Logger logger = Logger.getLogger(LocalDateUtils.class.getName());
+
     public static LocalDateTime getDate(String str) {
         if (str == null || str.isEmpty()) return null;
         str = str.trim();
@@ -27,7 +28,8 @@ public class LocalDateUtils {
 //                log.warn("Unknown date format:[" + str + "]. Parsing as \"dd-M/L-yyyy HH:mm:ss\"");
                 return dateTime.atStartOfDay();
             } catch (Exception ex) {
-                log.debug("Error parsing date-DD-MMM-YYYY:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE)) 
+                    logger.fine("Error parsing date-DD-MMM-YYYY:[" + str + "]:" + ex.getMessage());
             }
         }
         if (str.contains("0-UANIC "))
@@ -42,21 +44,24 @@ public class LocalDateUtils {
                 LocalDateTime dateTime = LocalDateTime.parse(dateTimePart, formatter);
                 return dateTime;
             } catch (Exception ex) {
-                log.debug("Error parsing date-UANIC:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date-UANIC:[" + str + "]:"+ ex.getMessage());
             }
         if (!str.contains("Z") && str.contains("T"))
             try {
                 result = LocalDateTime.parse(str);
                 return result;
             } catch (Exception ex) {
-                log.debug("Error parsing date0:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date0:[" + str + "]:"+ ex.getMessage());
             }
         if (str.contains("Z") && str.contains("T"))
             try {
                 ZonedDateTime dateTime = ZonedDateTime.parse(str);
                 return LocalDateTime.ofInstant(dateTime.toInstant(), ZoneOffset.UTC);
             } catch (Exception ex) {
-                log.debug("Error parsing date1:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date1:[" + str + "]:"+ ex.getMessage());
             }
 
         if (str.contains(".") && str.length() == 10) {
@@ -66,7 +71,8 @@ public class LocalDateUtils {
                 result = new java.sql.Timestamp(df_date.parse(str).getTime()).toLocalDateTime();
                 return result;
             } catch (ParseException ex) {
-                log.debug("Error parsing date2:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date2:[" + str + "]:"+ ex.getMessage());
             }
         }
         if (str.contains("-") && str.length() == 10) {
@@ -76,7 +82,8 @@ public class LocalDateUtils {
                 result = new java.sql.Timestamp(df_date.parse(str).getTime()).toLocalDateTime();
                 return result;
             } catch (ParseException ex) {
-                log.debug("Error parsing date3:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date3:[" + str + "]:"+ ex.getMessage());
             }
         }
         if (str.contains(" ") && str.length() == 19) {
@@ -86,7 +93,8 @@ public class LocalDateUtils {
                 result = new java.sql.Timestamp(df_date.parse(str).getTime()).toLocalDateTime();
                 return result;
             } catch (ParseException ex) {
-                log.debug("Error parsing date4:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date4:[" + str + "]:"+ ex.getMessage());
             }
         }
         if (str.length() == 25 && str.contains("+") && str.contains("-") && str.contains("T")) {
@@ -94,7 +102,8 @@ public class LocalDateUtils {
                 ZonedDateTime dateTime = ZonedDateTime.parse(str, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssxxx"));
                 return LocalDateTime.ofInstant(dateTime.toInstant(), ZoneOffset.UTC);
             } catch (Exception ex) {
-                log.debug("Error parsing date5:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date5:[" + str + "]:"+ ex.getMessage());
             }
         }
         if (str.contains("+") && str.contains("-") && str.contains("T")) {
@@ -102,7 +111,8 @@ public class LocalDateUtils {
                 ZonedDateTime dateTime = ZonedDateTime.parse(str, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ"));
                 return LocalDateTime.ofInstant(dateTime.toInstant(), ZoneOffset.UTC);
             } catch (Exception ex) {
-                log.debug("Error parsing date6:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date6:[" + str + "]:"+ ex.getMessage());
             }
         }
 
@@ -111,7 +121,8 @@ public class LocalDateUtils {
                 ZonedDateTime dateTime = ZonedDateTime.parse(str, DateTimeFormatter.ofPattern("yyyy.MM.dd'T'HH:mm:ssZ"));
                 return LocalDateTime.ofInstant(dateTime.toInstant(), ZoneOffset.UTC);
             } catch (Exception ex) {
-                log.debug("Error parsing date7:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date7:[" + str + "]:"+ ex.getMessage());
             }
         }
 
@@ -120,18 +131,21 @@ public class LocalDateUtils {
                 ZonedDateTime dateTime = ZonedDateTime.parse(str, DateTimeFormatter.ofPattern("yyyy-MM-dd' 'HH:mm:ss.nZ"));
                 return LocalDateTime.ofInstant(dateTime.toInstant(), ZoneOffset.UTC);
             } catch (Exception ex) {
-                log.debug("Error parsing date71:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date71:[" + str + "]:"+ ex.getMessage());
             }
             try {
                 ZonedDateTime dateTime = ZonedDateTime.parse(str, DateTimeFormatter.ofPattern("yyyy-MM-dd' 'HH:mm:ss.nX"));
                 return LocalDateTime.ofInstant(dateTime.toInstant(), ZoneOffset.UTC);
             } catch (Exception ex) {
-                log.debug("Error parsing date72:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date72:[" + str + "]:"+ ex.getMessage());
             }
             try {
                 return LocalDateTime.parse(str, DateTimeFormatter.ofPattern("yyyy-MM-dd' 'HH:mm:ss.n"));
             } catch (Exception ex) {
-                log.debug("Error parsing date73:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date73:[" + str + "]:"+ ex.getMessage());
             }
         }
         //20240328
@@ -147,7 +161,8 @@ public class LocalDateUtils {
                     return LocalDate.parse(str, DateTimeFormatter.ofPattern("ddMMyyyy")).atStartOfDay();
                 }
             } catch (Exception ex) {
-                log.debug("Error parsing date731:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date731:[" + str + "]:"+ ex.getMessage());
             }
 
         if (str.contains("-") && str.contains(":") && str.contains(" ")) {
@@ -155,18 +170,21 @@ public class LocalDateUtils {
                 ZonedDateTime dateTime = ZonedDateTime.parse(str, DateTimeFormatter.ofPattern("yyyy-MM-dd' 'HH:mm:ssZ"));
                 return LocalDateTime.ofInstant(dateTime.toInstant(), ZoneOffset.UTC);
             } catch (Exception ex) {
-                log.debug("Error parsing date81:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date81:[" + str + "]:"+ ex.getMessage());
             }
             try {
                 ZonedDateTime dateTime = ZonedDateTime.parse(str, DateTimeFormatter.ofPattern("yyyy-MM-dd' 'HH:mm:ssX"));
                 return LocalDateTime.ofInstant(dateTime.toInstant(), ZoneOffset.UTC);
             } catch (Exception ex) {
-                log.debug("Error parsing date82:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date82:[" + str + "]:"+ ex.getMessage());
             }
             try {
                 return LocalDateTime.parse(str, DateTimeFormatter.ofPattern("yyyy-MM-dd' 'HH:mm:ss"));
             } catch (Exception ex) {
-                log.debug("Error parsing date83:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date83:[" + str + "]:"+ ex.getMessage());
             }
 
         }
@@ -175,7 +193,7 @@ public class LocalDateUtils {
 //            Instant instant = Instant.ofEpochMilli(customDateTimeFromString.getMillis());
 //            return LocalDateTime.ofInstant(instant, ZoneId.of(customDateTimeFromString.getZone().getID()));
 //        } catch (Exception ex) {
-//            log.debug("Error parsing date7 joda:[" + str + "]:", ex);
+//            logger.fine("Error parsing date7 joda:[" + str + "]:"+ ex.getMessage());
 //        }
 
         if (str.contains(" ") && str.contains("-") && str.contains(":")) {
@@ -184,7 +202,8 @@ public class LocalDateUtils {
                 ZonedDateTime dateTime = ZonedDateTime.parse(str, DateTimeFormatter.ofPattern("yyyy-MM-dd' 'HH:mm:ss z"));
                 return LocalDateTime.ofInstant(dateTime.toInstant(), ZoneOffset.UTC);
             } catch (Exception ex) {
-                log.debug("Error parsing date9:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date9:[" + str + "]:"+ ex.getMessage());
             }
         }
 
@@ -193,7 +212,8 @@ public class LocalDateUtils {
                 String substring = str.substring(0, 19);
                 return LocalDateTime.parse(substring, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
             } catch (Exception ex) {
-                log.debug("Error parsing date8:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date8:[" + str + "]:"+ ex.getMessage());
             }
         }
 
@@ -206,7 +226,8 @@ public class LocalDateUtils {
                 LocalDate dateTime = LocalDate.parse(str, dTF);
                 return dateTime.atStartOfDay();
             } catch (Exception ex) {
-                log.debug("Error parsing date101:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date101:[" + str + "]:"+ ex.getMessage());
             }
         }
 
@@ -216,7 +237,8 @@ public class LocalDateUtils {
                 LocalDate dateTime = LocalDate.parse(str.substring(0, 8), DateTimeFormatter.ofPattern("yyyyMMdd"));
                 return dateTime.atStartOfDay();
             } catch (Exception ex) {
-                log.debug("Error parsing date102:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date102:[" + str + "]:"+ ex.getMessage());
             }
         }
 
@@ -224,27 +246,32 @@ public class LocalDateUtils {
             try {
                 return LocalDateTime.parse(str, DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
             } catch (Exception ex) {
-                log.debug("Error parsing date102:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date102:[" + str + "]:"+ ex.getMessage());
             }
             try {
                 return LocalDateTime.parse(str, DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
             } catch (Exception ex) {
-                log.debug("Error parsing date102-1:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date102-1:[" + str + "]:"+ ex.getMessage());
             }
             try {
                 return LocalDateTime.parse(str, DateTimeFormatter.ofPattern("yyyy/M/dd HH:mm:ss"));
             } catch (Exception ex) {
-                log.debug("Error parsing date102-2:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date102-2:[" + str + "]:"+ ex.getMessage());
             }
             try {
                 return LocalDateTime.parse(str, DateTimeFormatter.ofPattern("yyyy/M/dd H:mm:ss"));
             } catch (Exception ex) {
-                log.debug("Error parsing date102-3:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date102-3:[" + str + "]:"+ ex.getMessage());
             }
             try {
                 return LocalDateTime.parse(str, DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss"));
             } catch (Exception ex) {
-                log.debug("Error parsing date102-4:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date102-4:[" + str + "]:"+ ex.getMessage());
             }
         }
 
@@ -252,13 +279,15 @@ public class LocalDateUtils {
             try {
                 return LocalDateTime.parse(str, DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
             } catch (Exception ex) {
-                log.debug("Error parsing date1021:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date1021:[" + str + "]:"+ ex.getMessage());
             }
 
             try {
                 return LocalDateTime.parse(str, DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss"));
             } catch (Exception ex) {
-                log.debug("Error parsing date1022:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date1022:[" + str + "]:"+ ex.getMessage());
             }
         }
 
@@ -269,7 +298,8 @@ public class LocalDateUtils {
                 LocalDate dateTime = LocalDate.parse(str, formatter);
                 return dateTime.atStartOfDay();
             } catch (Exception ex) {
-                log.debug("Error parsing date9:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date9:[" + str + "]:"+ ex.getMessage());
             }
         }
 
@@ -281,7 +311,8 @@ public class LocalDateUtils {
 //                log.warn("Unknown date format:[" + str + "]. Parsing as \"yyyy-MM-dd'T'HH:mm:ss\"");
                 return dateTime;
             } catch (Exception ex) {
-                log.debug("Error parsing date9:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date9:[" + str + "]:"+ ex.getMessage());
             }
         }
         if (str.contains("T") && str.contains("-") && str.contains(":") && str.contains("UTC")) {
@@ -291,7 +322,8 @@ public class LocalDateUtils {
 //                log.warn("Unknown date format:[" + str + "]. Parsing as \"yyyy-MM-dd'T'HH:mm:ss\"");
                 return dateTime;
             } catch (Exception ex) {
-                log.debug("Error parsing date10:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date10:[" + str + "]:"+ ex.getMessage());
             }
             try {
                 String substring = str.substring(0, str.indexOf("UTC"));
@@ -299,7 +331,8 @@ public class LocalDateUtils {
 //                log.warn("Unknown date format:[" + str + "]. Parsing as \"dd-MMM-yyyy'T'HH:mm:ss\"");
                 return dateTime;
             } catch (Exception ex) {
-                log.debug("Error parsing date10:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date10:[" + str + "]:"+ ex.getMessage());
             }
         }
         if (str.contains(" ") && str.contains("-") && str.contains(":") && str.contains("UTC")) {
@@ -310,7 +343,8 @@ public class LocalDateUtils {
 //                log.warn("Unknown date format:[" + str + "]. Parsing as \"yyyy-MM-dd HH:mm:ss\"");
                 return dateTime;
             } catch (Exception ex) {
-                log.debug("Error parsing date10:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date10:[" + str + "]:"+ ex.getMessage());
             }
             try {
                 DateTimeFormatter dTF = new DateTimeFormatterBuilder().parseCaseInsensitive()
@@ -320,7 +354,8 @@ public class LocalDateUtils {
 //                log.warn("Unknown date format:[" + str + "]. Parsing as \"dd-M/L-yyyy HH:mm:ss\"");
                 return dateTime;
             } catch (Exception ex) {
-                log.debug("Error parsing date10:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date10:[" + str + "]:"+ ex.getMessage());
             }
         }
 
@@ -329,34 +364,38 @@ public class LocalDateUtils {
                 ZonedDateTime dateTime = ZonedDateTime.parse(str, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss z", Locale.US));
                 return LocalDateTime.ofInstant(dateTime.toInstant(), ZoneOffset.UTC);
             } catch (Exception ex) {
-                log.debug("Error parsing date91:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date91:[" + str + "]:"+ ex.getMessage());
             }
             try {
                 ZonedDateTime dateTime = ZonedDateTime.parse(str, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss Z", Locale.US));
                 return LocalDateTime.ofInstant(dateTime.toInstant(), ZoneOffset.UTC);
             } catch (Exception ex) {
-                log.debug("Error parsing date91:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date91:[" + str + "]:"+ ex.getMessage());
             }
             try {
                 ZonedDateTime dateTime = ZonedDateTime.parse(str, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss O", Locale.US));
                 return LocalDateTime.ofInstant(dateTime.toInstant(), ZoneOffset.UTC);
             } catch (Exception ex) {
-                log.debug("Error parsing date91:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date91:[" + str + "]:"+ ex.getMessage());
             }
             try {
                 String substring = str.substring(0, 19);
                 LocalDateTime dateTime = LocalDateTime.parse(substring, DateTimeFormatter.ofPattern("yyyy-MM-dd' 'HH:mm:ss"));
-                log.warn("Unknown date format:[" + str + "]. Parsing as \"yyyy-MM-dd' 'HH:mm:ss\"");
+                logger.warning("Unknown date format:[" + str + "]. Parsing as \"yyyy-MM-dd' 'HH:mm:ss\"");
                 return dateTime;
             } catch (Exception ex) {
-                log.debug("Error parsing date9:[" + str + "]:", ex);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Error parsing date9:[" + str + "]:"+ ex.getMessage());
             }
         }
 
         // -------------------------------------------------------------------------------------------------------------
 
 
-        log.error("Unknown date format:[" + str + "]");
+        logger.severe("Unknown date format:[" + str + "]");
         return null;
     }
 
@@ -377,6 +416,7 @@ public class LocalDateUtils {
     private static final String DATE_PATTERN_DD_MMM_YYYY = "^\\d{2} [A-Z]{3} \\d{4}$";
     // Create a Pattern object
     private static final Pattern pattern_DD_MMM_YYYY = Pattern.compile(DATE_PATTERN_DD_MMM_YYYY);
+
     public static boolean matchesDatePattern_DD_MMM_YYYY(String dateString) {
         // Create a Matcher object
         Matcher matcher = pattern_DD_MMM_YYYY.matcher(dateString);
