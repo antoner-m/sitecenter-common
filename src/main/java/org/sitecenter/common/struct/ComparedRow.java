@@ -1,8 +1,10 @@
 package org.sitecenter.common.struct;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class ComparedRow extends ReportRow{
     private ReportRow left;
     private ReportRow right;
