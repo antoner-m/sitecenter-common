@@ -2,6 +2,7 @@ package org.sitecenter.common.web;
 
 import org.springframework.data.domain.Page;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -9,9 +10,13 @@ import java.util.List;
  *
  * @param <T> the type of content in the response
  */
-public class PagedResponse<T> {
+public class PagedResponse<T> implements Serializable {
     private List<T> content;
     private int page;
+
+    public PagedResponse() {
+    }
+
     private int size;
     private long totalElements;
     private int totalPages;
