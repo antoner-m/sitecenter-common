@@ -1,6 +1,7 @@
 package org.sitecenter.common.web;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.io.Serializable;
 import java.util.List;
@@ -30,6 +31,15 @@ public class PagedResponse<T> implements Serializable {
         this.totalElements = pageData.getTotalElements();
         this.totalPages = pageData.getTotalPages();
         this.last = pageData.isLast();
+    }
+
+    public PagedResponse(final List<T> content, final long totalElements, final Pageable pageable) {
+        this.content = content;
+        this.page = pageable.getPageNumber();
+        this.size = pageable.getPageSize();
+        this.totalElements = totalElements;
+        this.totalPages = 1;
+        this.last = true;
     }
 
     // Getters and setters
