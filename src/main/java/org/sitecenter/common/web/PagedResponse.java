@@ -38,6 +38,16 @@ public class PagedResponse<T> implements Serializable {
         this.last = page <= totalPages;
     }
 
+
+    public PagedResponse(List<T> content, int page, int size, long totalElements, int totalPages, boolean isLast) {
+        this.content = content;
+        this.page = page;
+        this.size = size;
+        this.totalElements = totalElements;
+        this.totalPages = totalPages;
+        this.last = isLast;
+    }
+
     //
 //    // Constructor that accepts Page<T>
 //    public PagedResponse(Page<T> pageData) {
