@@ -1,8 +1,5 @@
 package org.sitecenter.common.web;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -23,24 +20,43 @@ public class PagedResponse<T> implements Serializable {
     private int totalPages;
     private boolean last;
 
-    // Constructor that accepts Page<T>
-    public PagedResponse(Page<T> pageData) {
-        this.content = pageData.getContent();
-        this.page = pageData.getNumber();
-        this.size = pageData.getSize();
-        this.totalElements = pageData.getTotalElements();
-        this.totalPages = pageData.getTotalPages();
-        this.last = pageData.isLast();
+    public PagedResponse(List<T> content, int page, int size, long totalElements) {
+        this.content = content;
+        this.page = page;
+        this.size = size;
+        this.totalElements = totalElements;
+        this.totalPages = (int)totalElements/size;
+        this.last = page <= totalPages;
     }
 
-    public PagedResponse(final List<T> content, final long totalElements, final Pageable pageable) {
+    public PagedResponse(List<T> content, int page, int size, long totalElements, int totalPages) {
         this.content = content;
-        this.page = pageable.getPageNumber();
-        this.size = pageable.getPageSize();
+        this.page = page;
+        this.size = size;
         this.totalElements = totalElements;
-        this.totalPages = 1;
-        this.last = true;
+        this.totalPages = totalPages;
+        this.last = page <= totalPages;
     }
+
+    //
+//    // Constructor that accepts Page<T>
+//    public PagedResponse(Page<T> pageData) {
+//        this.content = pageData.getContent();
+//        this.page = pageData.getNumber();
+//        this.size = pageData.getSize();
+//        this.totalElements = pageData.getTotalElements();
+//        this.totalPages = pageData.getTotalPages();
+//        this.last = pageData.isLast();
+//    }
+//
+//    public PagedResponse(final List<T> content, final long totalElements, final Pageable pageable) {
+//        this.content = content;
+//        this.page = pageable.getPageNumber();
+//        this.size = pageable.getPageSize();
+//        this.totalElements = totalElements;
+//        this.totalPages = 1;
+//        this.last = true;
+//    }
 
     // Getters and setters
     public List<T> getContent() {
