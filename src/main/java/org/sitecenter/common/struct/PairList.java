@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * PairList is a specialized ArrayList that stores PairString objects,
  * allowing store multiple items with same key via addByKey method.
- * Or it can act as unique key list if you work via setByKey method.
+ * Or it can act as unique key list if you work via putByKey method.
  */
 public class PairList extends ArrayList<PairString> implements Serializable {
     public PairList(int initialCapacity) {
@@ -37,7 +37,7 @@ public class PairList extends ArrayList<PairString> implements Serializable {
      * @param key
      * @param value
      */
-    public void setByKey(String key, String value) {
+    public void putByKey(String key, String value) {
         removeByKey(key);
         addByKey(key, value);
     }
