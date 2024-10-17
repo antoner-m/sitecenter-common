@@ -5,10 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serializable;
+
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class PairString {
+public class PairString implements Serializable {
     private String key;
     private String value;
 
