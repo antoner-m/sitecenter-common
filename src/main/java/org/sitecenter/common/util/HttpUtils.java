@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class HttpUtils {
@@ -26,7 +27,14 @@ public class HttpUtils {
         }
     }
 
-    public static String extractFileName(String url) throws URISyntaxException {
-        return Paths.get(new URI(url).getPath()).getFileName().toString();
+    public static String extractFileName(String url) {
+        try {
+            Path fileName = Paths.get(new URI(url).getPath()).getFileName();
+            if (fileName == null) return null;
+            return fileName.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
