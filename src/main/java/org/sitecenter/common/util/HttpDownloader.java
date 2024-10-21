@@ -19,7 +19,7 @@ public class HttpDownloader {
             if (entry.getKey() != null) {
                 sanitizedMap.put(entry.getKey(), entry.getValue());
             } else {
-                sanitizedMap.put("empty-key", entry.getValue());
+                sanitizedMap.put("", entry.getValue());
             }
         }
         return sanitizedMap;
@@ -53,7 +53,7 @@ public class HttpDownloader {
                 while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
                     baStream.write(dataBuffer, 0, bytesRead);
                 }
-                return new HttpDownloadResponse(baStream.toByteArray(), headers, statusCode);
+                return new HttpDownloadResponse(baStream.toByteArray(), sanitizeMap(headers), statusCode);
             }
         } catch (IOException e) {
             throw e;
