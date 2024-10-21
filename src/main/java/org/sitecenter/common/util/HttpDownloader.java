@@ -1,15 +1,26 @@
 package org.sitecenter.common.util;
 
+import org.sitecenter.common.struct.PairList;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class HttpDownloader {
-
+    public static Map<String, List<String>> sanitizeMap(Map<String, List<String>> map) {
+        Map<String, List<String>> sanitizedMap = new HashMap<>();
+        for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+            if (entry.getKey() != null) {
+                sanitizedMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return sanitizedMap;
+    }
     public static HttpDownloadResponse downloadWithHeaders(String url) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         try {
@@ -26,7 +37,7 @@ public class HttpDownloader {
                 while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
                     baStream.write(dataBuffer, 0, bytesRead);
                 }
-                return new HttpDownloadResponse(baStream.toByteArray(), headers, statusCode);
+                return new HttpDownloadResponse(baStream.toByteArray(), sanitizeMap(headers), statusCode);
             }
         } catch (IOException e) {
             throw e;
