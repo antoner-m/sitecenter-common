@@ -17,6 +17,8 @@ public class HttpDownloader {
         for (Map.Entry<String, List<String>> entry : map.entrySet()) {
             if (entry.getKey() != null) {
                 sanitizedMap.put(entry.getKey(), entry.getValue());
+            } else {
+                sanitizedMap.put("empty-key", entry.getValue());
             }
         }
         return sanitizedMap;
