@@ -43,9 +43,12 @@ public class PairList extends ArrayList<PairString> implements Serializable {
     }
 
     public Optional<String> findByKey(String key) {
+        if (this.isEmpty())
+            return Optional.empty();
+
         for (PairString p : this) {
             if (p.getKey().equals(key)) {
-                return Optional.of(p.getValue());
+                return p.getValue() == null ? Optional.empty() : Optional.of(p.getValue());
             }
         }
         return Optional.empty();
