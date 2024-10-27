@@ -66,4 +66,7 @@ public class PairList extends ArrayList<PairString> implements Serializable {
             return Collections.emptyList();
     }
 
+    public PairList duplicate() {
+        return new PairList(this);
+    }
 }
