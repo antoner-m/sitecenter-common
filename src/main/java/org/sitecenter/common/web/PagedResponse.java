@@ -1,7 +1,10 @@
 package org.sitecenter.common.web;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A generic wrapper class representing a paged response.
@@ -11,6 +14,8 @@ import java.util.List;
 public class PagedResponse<T> implements Serializable {
     private List<T> content;
     private int page;
+
+    private Map<String, Object> payload = new HashMap<>();
 
     public PagedResponse() {
     }
@@ -115,5 +120,13 @@ public class PagedResponse<T> implements Serializable {
 
     public void setLast(boolean last) {
         this.last = last;
+    }
+
+    public Map<String, Object> getPayload() {
+        return payload;
+    }
+
+    public void setPayload(Map<String, Object> payload) {
+        this.payload = payload;
     }
 }
