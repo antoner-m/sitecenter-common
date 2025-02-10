@@ -26,9 +26,15 @@ public class HttpDownloader {
     }
 
     public static HttpDownloadResponse downloadWithHeaders(String url) throws IOException {
+        return downloadWithHeaders(url, 10, 30);
+    }
+
+    public static HttpDownloadResponse downloadWithHeaders(String url, int connectTimeoutSeconds, int readTimeoutSeconds) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         try {
             connection.setRequestMethod("GET");
+            connection.setConnectTimeout(connectTimeoutSeconds*1000); // timeout for connection
+            connection.setReadTimeout(readTimeoutSeconds*1000); // timeout for reading data
             connection.connect();
 
             int statusCode = connection.getResponseCode();
