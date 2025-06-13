@@ -20,6 +20,9 @@ public class Report {
      * Time to generate report.
      */
     long generationMs;
+
+    boolean finished = false;
+    boolean ok = true;
 //    boolean strictCodes = true;
 
     final Map<String, ReportGroup> groups = new LinkedHashMap<>();
@@ -146,6 +149,8 @@ public class Report {
         long millis = date.toInstant(ZoneOffset.UTC).toEpochMilli();
         long now = LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC).toEpochMilli();
         setGenerationMs(now - millis);
+        finished = true;
+        ok = !haveErrors();
     }
 
     public boolean haveErrors() {
