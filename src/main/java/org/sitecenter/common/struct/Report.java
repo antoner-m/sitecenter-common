@@ -25,7 +25,7 @@ public class Report {
     boolean ok = true;
 //    boolean strictCodes = true;
 
-    final Map<String, ReportGroup> groups = new LinkedHashMap<>();
+    Map<String, ReportGroup> groups = new LinkedHashMap<>();
     String comment;
 
     public Report() {
