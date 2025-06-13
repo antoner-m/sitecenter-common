@@ -170,4 +170,9 @@ public class Report {
         }
         return result;
     }
+
+    public void setGroups(Map<String, ReportGroup> groups) {
+        this.groups.clear();
+        this.groups.putAll(groups);
+    }
 }
