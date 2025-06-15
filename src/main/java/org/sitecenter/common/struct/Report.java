@@ -88,6 +88,13 @@ public class Report {
     }
 
     //------------------------------------------------------------------------------------------------------------------
+    public void addGroup(@NonNull ReportGroup group) {
+        synchronized (groups) {
+            if (getGroups().keySet().stream().anyMatch(code::equalsIgnoreCase))
+                throw new ReportException(String.format("Report already have group with code:%s!", code));
+            getGroups().put(code, group);
+        }
+    }
     public ReportGroup addGroup(@NonNull String code, @NonNull String name) {
         synchronized (groups) {
             if (getGroups().keySet().stream().anyMatch(code::equalsIgnoreCase))
