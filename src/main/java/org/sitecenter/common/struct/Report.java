@@ -191,4 +191,28 @@ public class Report {
         this.groups.clear();
         this.groups.putAll(groups);
     }
+
+
+    public void sanitizeGroupKeys() {
+        synchronized (groups) {
+            Map<String, ReportGroup> groups = getGroups();
+
+            if (groups == null || groups.isEmpty()) {
+                return;
+            }
+
+            Map<String, ReportGroup> sanitized = new LinkedHashMap<>();
+            for (Map.Entry<String, ReportGroup> entry : groups.entrySet()) {
+                String sanitizedKey = entry.getKey().replaceAll("[:,\\.]", "_");
+                sanitized.put(sanitizedKey, entry.getValue());
+                for (ReportRow row : entry.getValue().getRows()) {
+                    if (row.getGroup() == null)
+                        continue;
+                    String sanitizedGroup = row.getGroup().replaceAll("[:,\\.]", "_");
+                    row.setGroup(sanitizedGroup);
+                }
+            }
+            setGroups(sanitized);
+        }
+    }
 }
