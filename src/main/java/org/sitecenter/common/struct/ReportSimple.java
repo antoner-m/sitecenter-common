@@ -200,7 +200,7 @@ public class ReportSimple {
         return result;
     }
 
-    public void setGroupList(Map<String, ReportGroup> groups) {
+    public void setGroupListFromMap(Map<String, ReportGroup> groups) {
         this.groupList.clear();
         this.groupList = new ArrayList<>(groups.values());
     }
