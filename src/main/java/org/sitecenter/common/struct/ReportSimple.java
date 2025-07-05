@@ -25,7 +25,7 @@ public class ReportSimple {
     boolean ok = true;
 //    boolean strictCodes = true;
 
-    List<ReportGroup> groups = new ArrayList<>();
+    List<ReportGroup> groupList = new ArrayList<>();
     String comment;
 
     public ReportSimple() {
@@ -61,9 +61,9 @@ public class ReportSimple {
 
         // Copy groups from the Map in Report to the List in ReportSimple
         if (complex.getGroups() != null) {
-            this.groups = new ArrayList<>(complex.getGroups().values());
+            this.groupList = new ArrayList<>(complex.getGroups().values());
         } else {
-            this.groups = new ArrayList<>();
+            this.groupList = new ArrayList<>();
         }
     }
 
@@ -71,7 +71,7 @@ public class ReportSimple {
     public ReportSimple addRow(ReportRow row) {
         if (row.getGroup() == null) throw new ReportException("Group is null.");
 
-        synchronized (groups) {
+        synchronized (groupList) {
             ReportGroup reportGroup = findOrCreateGroup(row.getGroup());
             reportGroup.addRow(row);
         }
@@ -107,33 +107,33 @@ public class ReportSimple {
 
     //------------------------------------------------------------------------------------------------------------------
     public void addGroup(@NonNull ReportGroup group) {
-        synchronized (groups) {
-            getGroups().add(group);
+        synchronized (groupList) {
+            getGroupList().add(group);
         }
     }
     public void addGroup(@NonNull List<ReportGroup> addGroups) {
-        synchronized (groups) {
+        synchronized (groupList) {
             for (ReportGroup group : addGroups) {
-                getGroups().add(group);
+                getGroupList().add(group);
             }
         }
     }
     public ReportGroup addGroup(@NonNull String code, @NonNull String name) {
-        synchronized (groups) {
+        synchronized (groupList) {
             ReportGroup group = new ReportGroup(code, name);
-            getGroups().add(group);
+            getGroupList().add(group);
             return group;
         }
     }
 
     public ReportGroup findGroup(@NonNull String groupCode) {
-        synchronized (groups) {
+        synchronized (groupList) {
 
-            return groups.stream().filter(g->g.getCode().equalsIgnoreCase(groupCode)).findAny().orElse(null);
+            return groupList.stream().filter(g->g.getCode().equalsIgnoreCase(groupCode)).findAny().orElse(null);
         }
     }
     public ReportGroup findOrCreateGroup(@NonNull String groupCode) {
-        synchronized (groups) {
+        synchronized (groupList) {
             ReportGroup group = findGroup(groupCode);
             if (group != null) return group;
             return addGroup(groupCode, "");
@@ -141,15 +141,15 @@ public class ReportSimple {
     }
 
     public List<ReportGroup> reportGroups() {
-        synchronized (groups) {
-            return new ArrayList<>(getGroups());
+        synchronized (groupList) {
+            return new ArrayList<>(getGroupList());
         }
     }
     //------------------------------------------------------------------------------------------------------------------
 
     public List<ReportRow> allRows() {
-        synchronized (groups) {
-            return getGroups().stream().flatMap(x -> x.getRows().stream()).collect(Collectors.toList());
+        synchronized (groupList) {
+            return getGroupList().stream().flatMap(x -> x.getRows().stream()).collect(Collectors.toList());
         }
     }
 
@@ -165,8 +165,8 @@ public class ReportSimple {
     }
 
     public void sortRows() {
-        synchronized (groups) {
-            for (ReportGroup group : getGroups()) {
+        synchronized (groupList) {
+            for (ReportGroup group : getGroupList()) {
                 group.getRows().sort(Comparator.comparing(ReportRow::getSort));
             }
         }
@@ -183,16 +183,16 @@ public class ReportSimple {
     }
 
     public boolean haveErrors() {
-        return getGroups().stream().anyMatch(ReportGroup::haveErrors);
+        return getGroupList().stream().anyMatch(ReportGroup::haveErrors);
     }
 
     public boolean haveWarnings() {
-        return getGroups().stream().anyMatch(ReportGroup::haveWarnings);
+        return getGroupList().stream().anyMatch(ReportGroup::haveWarnings);
     }
 
     public List<ReportRow> compare(@NonNull ReportSimple report) {
         List<ReportRow> result = new ArrayList<>();
-        for (ReportGroup group : this.getGroups()) {
+        for (ReportGroup group : this.getGroupList()) {
             ReportGroup comparedGroup = report.findGroup(group.getCode());
             List<ComparedRow> resultCompare = group.compare(comparedGroup);
             result.addAll(resultCompare);
@@ -200,37 +200,12 @@ public class ReportSimple {
         return result;
     }
 
-    public void setGroups(Map<String, ReportGroup> groups) {
-        this.groups.clear();
-        this.groups = new ArrayList<>(groups.values());
+    public void setGroupList(Map<String, ReportGroup> groups) {
+        this.groupList.clear();
+        this.groupList = new ArrayList<>(groups.values());
     }
-    public void setGroups(List<ReportGroup> groups) {
-        this.groups.clear();
-        this.groups = groups;
-    }
-
-
-    public void sanitizeGroupKeys() {
-        synchronized (groups) {
-            List <ReportGroup> groups = getGroups();
-
-            if (groups == null || groups.isEmpty()) {
-                return;
-            }
-
-            List<ReportGroup> sanitized = new ArrayList<>( groups.size());
-            for (ReportGroup entry : groups) {
-                String sanitizedKey = entry.getCode().replaceAll("[:,\\.]", "_");
-                entry.setCode(sanitizedKey);
-                sanitized.add(entry);
-                for (ReportRow row : entry.getRows()) {
-                    if (row.getGroup() == null)
-                        continue;
-                    String sanitizedGroup = row.getGroup().replaceAll("[:,\\.]", "_");
-                    row.setGroup(sanitizedGroup);
-                }
-            }
-            setGroups(sanitized);
-        }
+    public void setGroupList(List<ReportGroup> groups) {
+        this.groupList.clear();
+        this.groupList = groups;
     }
 }
