@@ -1,5 +1,6 @@
 package org.sitecenter.common.util;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -204,5 +205,61 @@ public class I18n {
     public static void loadTranslations(Map<String, Map<String, String>> translationMap) {
         translations.clear();
         translations.putAll(translationMap);
+    }
+
+
+    // Add this helper method to the class:
+    public static String formatDuration(Duration duration, String language) {
+        long days = duration.toDays();
+        long hours = duration.toHours() % 24;
+        long minutes = duration.toMinutes() % 60;
+        long seconds = duration.getSeconds() % 60;
+
+        StringBuilder result = new StringBuilder();
+
+        if (days > 0) {
+            result.append(days).append(" ");
+            if (days == 1) {
+                result.append(I18n.tt("time.day", "day", language));
+            } else {
+                result.append(I18n.tt("time.days", "days", language));
+            }
+            result.append(" ");
+        }
+
+        if (hours > 0) {
+            result.append(hours).append(" ");
+            if (hours == 1) {
+                result.append(I18n.tt("time.hour", "hour", language));
+            } else {
+                result.append(I18n.tt("time.hours", "hours", language));
+            }
+            result.append(" ");
+        }
+
+        if (minutes > 0) {
+            result.append(minutes).append(" ");
+            if (minutes == 1) {
+                result.append(I18n.tt("time.minute", "minute", language));
+            } else {
+                result.append(I18n.tt("time.minutes", "minutes", language));
+            }
+            result.append(" ");
+        }
+
+        if (seconds > 0 && days == 0 && hours == 0) { // Only show seconds if less than an hour
+            result.append(seconds).append(" ");
+            if (seconds == 1) {
+                result.append(I18n.tt("time.second", "second", language));
+            } else {
+                result.append(I18n.tt("time.seconds", "seconds", language));
+            }
+        }
+
+        if (result.length() == 0) {
+            result.append("0 ").append(I18n.tt("time.seconds", "seconds", language));
+        }
+
+        return result.toString().trim();
     }
 }
