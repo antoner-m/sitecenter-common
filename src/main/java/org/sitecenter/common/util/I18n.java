@@ -201,4 +201,8 @@ public class I18n {
     public static void loadTranslations(String locale, Map<String, String> translationMap) {
         translations.put(locale, new HashMap<>(translationMap));
     }
+    public static void loadTranslations(Map<String, Map<String, String>> translationMap) {
+        translations.clear();
+        translations.putAll(translationMap);
+    }
 }
