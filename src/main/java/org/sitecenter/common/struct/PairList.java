@@ -32,6 +32,11 @@ public class PairList extends ArrayList<PairString> implements Serializable {
         this.removeIf(p -> p.getKey().equals(key));
     }
 
+    public void removeByKeyPrefix(String prefix) {
+        String lowerCasePrefix = prefix.toLowerCase();
+        this.removeIf(p -> p.getKey().toLowerCase().startsWith(prefix));
+    }
+
     /** Behave like hashmap - only one key allowed in list
      *
      * @param key
