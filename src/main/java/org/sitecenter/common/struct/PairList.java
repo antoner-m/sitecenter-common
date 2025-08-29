@@ -20,7 +20,8 @@ public class PairList extends ArrayList<PairString> implements Serializable {
         super(c);
     }
 
-    /** multiple items with same key allowed
+    /**
+     * multiple items with same key allowed
      *
      * @param key
      * @param value
@@ -28,6 +29,7 @@ public class PairList extends ArrayList<PairString> implements Serializable {
     public void addByKey(String key, String value) {
         this.add(new PairString(key, value));
     }
+
     public void removeByKey(String key) {
         this.removeIf(p -> p.getKey().equals(key));
     }
@@ -37,7 +39,8 @@ public class PairList extends ArrayList<PairString> implements Serializable {
         this.removeIf(p -> p.getKey().toLowerCase().startsWith(prefix));
     }
 
-    /** Behave like hashmap - only one key allowed in list
+    /**
+     * Behave like hashmap - only one key allowed in list
      *
      * @param key
      * @param value
@@ -69,6 +72,23 @@ public class PairList extends ArrayList<PairString> implements Serializable {
             return values;
         else
             return Collections.emptyList();
+    }
+
+    /**
+     * Finds and retrieves all PairString objects in the list with keys that start with
+     * the given prefix. The search is case-insensitive.
+     *
+     * @param prefix the prefix to filter keys in the PairList. Case-insensitive.
+     * @return a PairList containing all PairString objects whose keys start with the provided prefix.
+     */
+    public PairList findByKeyPrefix(String prefix) {
+        PairList values = new PairList();
+        String lowerCasePrefix = prefix.toLowerCase();
+        for (PairString p : this) {
+            if (p.getKey().toLowerCase().startsWith(lowerCasePrefix))
+                values.add(p);
+        }
+        return values;
     }
 
     public PairList duplicate() {
