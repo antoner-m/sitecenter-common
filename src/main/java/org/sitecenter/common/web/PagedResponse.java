@@ -9,6 +9,8 @@ import java.util.Map;
 /**
  * A generic wrapper class representing a paged response.
  *
+ * page index start from 0
+ *
  * @param <T> the type of content in the response
  */
 public class PagedResponse<T> implements Serializable {
@@ -18,20 +20,50 @@ public class PagedResponse<T> implements Serializable {
     private Map<String, Object> payload = new HashMap<>();
 
     public PagedResponse() {
+        content = new ArrayList<>();
     }
 
     private int size;
     private long totalElements;
     private int totalPages;
     private boolean last;
+    private boolean first;
+
+    public PagedResponse(List<T> fullList, int page, int size) {
+        if (fullList != null) {
+            int fromIdx = page * size;
+            int toIdx = fromIdx + size;
+            if (fromIdx >= 0 && fromIdx < fullList.size()) {
+                if (toIdx > fullList.size())
+                    toIdx = fullList.size();
+                this.content = fullList.subList(fromIdx, toIdx);
+                this.totalElements = fullList.size();
+                this.page = page;
+                this.size = size;
+            } else {
+                this.page = 0;
+                this.size = 0;
+                this.content = new ArrayList<>();
+                this.totalElements = fullList.size();
+            }
+        } else {
+            this.page = 0;
+            this.size = 0;
+            this.totalPages = 0;
+        }
+        this.totalPages = calcTotalPages();
+        this.last = page >= totalPages-1;
+        this.first = page == 0;
+    }
 
     public PagedResponse(List<T> content, int page, int size, long totalElements) {
         this.content = content;
         this.page = page;
         this.size = size;
         this.totalElements = totalElements;
-        this.totalPages = (int)totalElements/size;
-        this.last = page <= totalPages;
+        this.totalPages = calcTotalPages();
+        this.last = page >= totalPages-1;
+        this.first = page == 0;
     }
 
     public PagedResponse(List<T> content, int page, int size, long totalElements, int totalPages) {
@@ -40,9 +72,9 @@ public class PagedResponse<T> implements Serializable {
         this.size = size;
         this.totalElements = totalElements;
         this.totalPages = totalPages;
-        this.last = page <= totalPages;
+        this.last = page >= totalPages-1;
+        this.first = page == 0;
     }
-
 
     public PagedResponse(List<T> content, int page, int size, long totalElements, int totalPages, boolean isLast) {
         this.content = content;
@@ -51,27 +83,26 @@ public class PagedResponse<T> implements Serializable {
         this.totalElements = totalElements;
         this.totalPages = totalPages;
         this.last = isLast;
+        this.first = page == 0;
     }
 
-    //
-//    // Constructor that accepts Page<T>
-//    public PagedResponse(Page<T> pageData) {
-//        this.content = pageData.getContent();
-//        this.page = pageData.getNumber();
-//        this.size = pageData.getSize();
-//        this.totalElements = pageData.getTotalElements();
-//        this.totalPages = pageData.getTotalPages();
-//        this.last = pageData.isLast();
-//    }
-//
-//    public PagedResponse(final List<T> content, final long totalElements, final Pageable pageable) {
-//        this.content = content;
-//        this.page = pageable.getPageNumber();
-//        this.size = pageable.getPageSize();
-//        this.totalElements = totalElements;
-//        this.totalPages = 1;
-//        this.last = true;
-//    }
+    public PagedResponse(List<T> content, int page, int size, long totalElements, int totalPages, boolean isLast, boolean isFirst) {
+        this.content = content;
+        this.page = page;
+        this.size = size;
+        this.totalElements = totalElements;
+        this.totalPages = totalPages;
+        this.last = isLast;
+        this.first = isFirst;
+    }
+
+    private int calcTotalPages() {
+        int result = 0;
+        if (size > 0) {
+            result = (int) Math.ceil((double) totalElements / size);
+        }
+        return result;
+    }
 
     // Getters and setters
     public List<T> getContent() {
@@ -120,6 +151,14 @@ public class PagedResponse<T> implements Serializable {
 
     public void setLast(boolean last) {
         this.last = last;
+    }
+
+    public boolean isFirst() {
+        return first;
+    }
+
+    public void setFirst(boolean first) {
+        this.first = first;
     }
 
     public Map<String, Object> getPayload() {
