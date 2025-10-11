@@ -14,6 +14,13 @@ import java.util.stream.Collectors;
 public class ReportGroup {
     String code;
     String name;
+    String comment;
+    int status;
+    boolean finished = false;
+    boolean ok = true;
+
+    List<ReportGroup> groups = new ArrayList<>();
+
     List<ReportRow> rows = new ArrayList<>();
 //    boolean strictCodes = true;
 
