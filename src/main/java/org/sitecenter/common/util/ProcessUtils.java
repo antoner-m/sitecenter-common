@@ -18,8 +18,9 @@ public class ProcessUtils {
 //        log.debug("\n executeCommandToString: " + cmd + " ===========");
         BufferedReader stdInput = null;
         BufferedReader stdError = null;
+        Process p = null;
         try {
-            Process p = Runtime.getRuntime().exec(cmd);
+            p = Runtime.getRuntime().exec(cmd);
             stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
             stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
             String s;
@@ -32,19 +33,21 @@ public class ProcessUtils {
                 logger.warning(s);
             }
 //            log.debug("\n executeCommandToString output catched: " + cmd + " ===========");
-//            int exitValue = p.waitFor();
-            p.destroy();
-//            log.debug("\n executeCommandToString process destroyed: " + cmd + " ===========");
+            // CRITICAL FIX: Wait for process to complete and reap the zombie
+            int exitValue = p.waitFor();
+//            log.debug("\n executeCommandToString process finished with exit code: " + exitValue + " for cmd: " + cmd);
             return result.toString();
         } catch (IOException e) {
-//            e.printStackTrace();
-        }
-//        catch (InterruptedException e) {
-////            throw new RuntimeException(e);
-//        }
-        finally {
+            logger.warning("IOException executing command: " + cmd + " - " + e.getMessage());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            logger.warning("Command interrupted: " + cmd);
+        } finally {
             close(stdError);
             close(stdInput);
+            if (p != null) {
+                p.destroy();
+            }
 //            log.debug("\n executeCommandToString streams closed: " + cmd + " ===========");
         }
         return null;
@@ -54,11 +57,11 @@ public class ProcessUtils {
 //        log.debug("\n executeCommandToStrArr: " + cmd + " ===========");
         BufferedReader stdInput = null;
         BufferedReader stdError = null;
+        Process p = null;
         try {
-            Process p = Runtime.getRuntime().exec(cmd);
+            p = Runtime.getRuntime().exec(cmd);
             stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
             stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-//            int exitValue = p.waitFor();
             String s;
             // read the output from the command
             while ((s = stdInput.readLine()) != null) {
@@ -69,18 +72,21 @@ public class ProcessUtils {
                 logger.warning(s);
             }
 //            log.debug("\n executeCommandToStrArr: Finishing command: " + cmd + " ===========");
-            p.destroy();
-//            log.debug("\n executeCommandToStrArr: Destroying process: " + cmd + " ===========");
+            // CRITICAL FIX: Wait for process to complete and reap the zombie
+            int exitValue = p.waitFor();
+//            log.debug("\n executeCommandToStrArr: Process finished with exit code: " + exitValue + " for cmd: " + cmd);
             return result.toArray(new String[0]);
         } catch (IOException e) {
-//            e.printStackTrace();
-        }
-//        catch (InterruptedException e) {
-////            throw new RuntimeException(e);
-//        }
-        finally {
+            logger.warning("IOException executing command: " + cmd + " - " + e.getMessage());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            logger.warning("Command interrupted: " + cmd);
+        } finally {
             close(stdError);
             close(stdInput);
+            if (p != null) {
+                p.destroy();
+            }
 //            log.debug("\n executeCommandToStrArr: Exiting from command: " + cmd + " ===========");
         }
         return EMPTY_STRING;
