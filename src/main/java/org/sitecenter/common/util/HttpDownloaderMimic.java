@@ -26,7 +26,7 @@ public class HttpDownloaderMimic {
             "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8";
     private static final String DEFAULT_ACCEPT_LANGUAGE = "en-US,en;q=0.9";
     private static final String DEFAULT_ACCEPT_ENCODING = "identity";
-    private static final String DEFAULT_CONNECTION = "keep-alive";
+    private static final String DEFAULT_CONNECTION = "close";
     private static final String DEFAULT_UPGRADE_INSECURE_REQUESTS = "1";
 
     public static HttpDownloadResponse download(String url) throws IOException {
