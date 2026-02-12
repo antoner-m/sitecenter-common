@@ -42,10 +42,10 @@ public class RegexpResponse {
     }
 
     public List<String> getMatchGroupValues() {
-        if (matchGroupValues.isEmpty())
-            return null;
-        else
-            return matchGroupValues.get(0);
+        if (matchGroupValues.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return matchGroupValues.get(0);
     }
 
     public List<List<String>> getMatchGroupAllValues() {

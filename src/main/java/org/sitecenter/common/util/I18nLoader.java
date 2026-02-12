@@ -161,34 +161,93 @@ public class I18nLoader {
      * Parse locale blocks from the object content
      */
     private static void parseLocaleBlocks(String content, Map<String, Map<String, String>> translations) {
-        // Split by locale patterns like "en: {" or "es: {"
-        // Only match 2-3 letter locale codes at word boundaries to avoid matching words in translation values
-        Pattern localePattern = Pattern.compile("\\b([a-z]{2,3})\\s*:\\s*\\{");
-        Matcher matcher = localePattern.matcher(content);
-        
-        int lastEnd = 0;
-        String currentLocale = null;
-        
-        while (matcher.find()) {
-            // Process previous locale if exists
-            if (currentLocale != null) {
-                String localeContent = content.substring(lastEnd, matcher.start());
-                Map<String, String> localeTranslations = parseTranslationEntries(localeContent);
-                translations.put(currentLocale, localeTranslations);
+        int i = 0;
+        while (i < content.length()) {
+            // Skip separators and whitespace between top-level locale blocks.
+            while (i < content.length() && (Character.isWhitespace(content.charAt(i)) || content.charAt(i) == ',')) {
+                i++;
             }
-            
-            currentLocale = matcher.group(1);
-            lastEnd = matcher.end();
-        }
-        
-        // Process the last locale
-        if (currentLocale != null) {
-            String localeContent = content.substring(lastEnd);
-            // Remove trailing } and any semicolons
-            localeContent = localeContent.replaceAll("\\}\\s*[,;]?\\s*$", "");
+            if (i >= content.length()) {
+                break;
+            }
+
+            int keyStart = i;
+            while (i < content.length() && content.charAt(i) >= 'a' && content.charAt(i) <= 'z') {
+                i++;
+            }
+            int keyLen = i - keyStart;
+            if (keyLen < 2 || keyLen > 3) {
+                i = keyStart + 1;
+                continue;
+            }
+
+            String locale = content.substring(keyStart, i);
+            while (i < content.length() && Character.isWhitespace(content.charAt(i))) {
+                i++;
+            }
+            if (i >= content.length() || content.charAt(i) != ':') {
+                i = keyStart + 1;
+                continue;
+            }
+            i++; // skip ':'
+            while (i < content.length() && Character.isWhitespace(content.charAt(i))) {
+                i++;
+            }
+            if (i >= content.length() || content.charAt(i) != '{') {
+                i = keyStart + 1;
+                continue;
+            }
+
+            int blockStart = i;
+            int blockEnd = findMatchingBrace(content, blockStart);
+            if (blockEnd == -1) {
+                break;
+            }
+
+            String localeContent = content.substring(blockStart + 1, blockEnd);
             Map<String, String> localeTranslations = parseTranslationEntries(localeContent);
-            translations.put(currentLocale, localeTranslations);
+            translations.put(locale, localeTranslations);
+
+            i = blockEnd + 1;
         }
+    }
+
+    private static int findMatchingBrace(String content, int openBraceIndex) {
+        int braceCount = 0;
+        boolean inString = false;
+        char quoteChar = 0;
+
+        for (int i = openBraceIndex; i < content.length(); i++) {
+            char c = content.charAt(i);
+
+            if (inString) {
+                if (c == '\\') {
+                    i++; // Skip escaped char in string
+                    continue;
+                }
+                if (c == quoteChar) {
+                    inString = false;
+                }
+                continue;
+            }
+
+            if (c == '"' || c == '\'') {
+                inString = true;
+                quoteChar = c;
+                continue;
+            }
+
+            if (c == '{') {
+                braceCount++;
+            } else if (c == '}') {
+                braceCount--;
+                if (braceCount == 0) {
+                    return i;
+                }
+            }
+        }
+
+        return -1;
     }
     
     /**

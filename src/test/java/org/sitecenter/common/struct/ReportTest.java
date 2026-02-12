@@ -11,7 +11,7 @@ class ReportTest {
     @Test
     void finished() throws InterruptedException {
         Report rpt = new Report();
-        Thread.sleep(100);
+        Thread.sleep(200);
         rpt.finished();
         long duration = rpt.getGenerationMs();
         assert(duration > 100);
