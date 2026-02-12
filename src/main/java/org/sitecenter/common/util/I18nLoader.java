@@ -162,7 +162,8 @@ public class I18nLoader {
      */
     private static void parseLocaleBlocks(String content, Map<String, Map<String, String>> translations) {
         // Split by locale patterns like "en: {" or "es: {"
-        Pattern localePattern = Pattern.compile("([a-zA-Z_]+)\\s*:\\s*\\{");
+        // Only match 2-3 letter locale codes at word boundaries to avoid matching words in translation values
+        Pattern localePattern = Pattern.compile("\\b([a-z]{2,3})\\s*:\\s*\\{");
         Matcher matcher = localePattern.matcher(content);
         
         int lastEnd = 0;
@@ -195,9 +196,10 @@ public class I18nLoader {
      */
     private static Map<String, String> parseTranslationEntries(String content) {
         Map<String, String> entries = new HashMap<>();
-        
+
         // Pattern to match: "key": "value" or 'key': 'value'
-        Pattern entryPattern = Pattern.compile("([\"'])([^\"']+)\\1\\s*:\\s*([\"'])([^\"']*?)\\3");
+        // Updated to handle any content in values including colons, using negative lookahead
+        Pattern entryPattern = Pattern.compile("([\"'])([^\"']+)\\1\\s*:\\s*([\"'])(((?!\\3).)*?)\\3", Pattern.DOTALL);
         Matcher matcher = entryPattern.matcher(content);
         
         while (matcher.find()) {
