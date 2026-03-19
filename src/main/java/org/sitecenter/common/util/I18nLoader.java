@@ -61,7 +61,7 @@ public class I18nLoader {
             for (Map.Entry<String, Map<String, String>> entry : allTranslations.entrySet()) {
                 String locale = entry.getKey();
                 Map<String, String> translations = entry.getValue();
-                I18n.loadTranslations(locale, translations);
+                I18n.addTranslations(locale, translations);
             }
             
             System.out.println("Successfully loaded translations for " + allTranslations.size() + " locales");

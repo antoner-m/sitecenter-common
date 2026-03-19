@@ -193,6 +193,21 @@ public class I18n {
     public static void addTranslation(String locale, String key, String value) {
         translations.computeIfAbsent(locale, k -> new HashMap<>()).put(key, value);
     }
+
+    /**
+     * Add multiple translations programmatically without clearing existing locale keys
+     * @param locale Locale code
+     * @param translationMap Map of key-value translations to add or override
+     */
+    public static void addTranslations(String locale, Map<String, String> translationMap) {
+        if (locale == null || locale.isBlank()) {
+            throw new IllegalArgumentException("locale must not be blank");
+        }
+        if (translationMap == null || translationMap.isEmpty()) {
+            return;
+        }
+        translations.computeIfAbsent(locale, k -> new HashMap<>()).putAll(translationMap);
+    }
     
     /**
      * Load translations from a map

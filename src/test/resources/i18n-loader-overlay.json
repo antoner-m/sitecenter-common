@@ -1,0 +1,9 @@
+{
+  en: {
+    "shared.key": "Overlay shared",
+    "overlay.only": "Overlay only"
+  },
+  ru: {
+    "shared.key": "Наложение"
+  }
+}

@@ -10,6 +10,21 @@ import static org.junit.jupiter.api.Assertions.*;
 class I18nLoaderTest {
 
     @Test
+    void initializeI18nFromFileAddsTranslationsWithoutClearingExistingKeys() {
+        I18n.loadTranslations(Map.of());
+        I18n.addTranslations("en", Map.of(
+                "base.only", "Base only",
+                "shared.key", "Base shared"));
+
+        I18nLoader.initializeI18nFromFile("i18n-loader-overlay.json", false);
+
+        assertEquals("Base only", I18n.tt("base.only", "fallback", "en"));
+        assertEquals("Overlay shared", I18n.tt("shared.key", "fallback", "en"));
+        assertEquals("Overlay only", I18n.tt("overlay.only", "fallback", "en"));
+        assertEquals("Наложение", I18n.tt("shared.key", "fallback", "ru"));
+    }
+
+    @Test
     void parseSingleLineJavaScriptWithMultipleLocales() throws Exception {
         String js = "export default { en: {'k1':'v1','k2':'v2'}, ru: {'k1':'r1'}, de: {'k':'d'} };";
 
